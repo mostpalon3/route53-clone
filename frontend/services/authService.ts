@@ -9,9 +9,12 @@ export const authService = {
       const { access_token, user } = response.data;
       saveToken(access_token);
       return user;
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.detail) {
-        throw new Error(error.response.data.detail);
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as any;
+        if (err.response && err.response.data && err.response.data.detail) {
+          throw new Error(err.response.data.detail);
+        }
       }
       throw new Error('Login failed');
     }

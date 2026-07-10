@@ -10,9 +10,28 @@ import '@cloudscape-design/global-styles/index.css';
 interface AppShellProps {
   children: React.ReactNode;
   breadcrumbs?: React.ReactNode;
+  contentType?: 'default' | 'table' | 'form' | 'cards' | 'wizard';
+  splitPanel?: React.ReactNode;
+  splitPanelOpen?: boolean;
+  onSplitPanelToggle?: (event: any) => void;
+  splitPanelSize?: number;
+  onSplitPanelResize?: (event: any) => void;
+  splitPanelPreferences?: any;
+  onSplitPanelPreferencesChange?: (event: any) => void;
 }
 
-export function AppShell({ children, breadcrumbs }: AppShellProps) {
+export function AppShell({
+  children,
+  breadcrumbs,
+  contentType,
+  splitPanel,
+  splitPanelOpen,
+  onSplitPanelToggle,
+  splitPanelSize,
+  onSplitPanelResize,
+  splitPanelPreferences,
+  onSplitPanelPreferencesChange,
+}: AppShellProps) {
   const [navigationOpen, setNavigationOpen] = useState(true);
 
   // Remember collapsed state using localStorage
@@ -40,6 +59,14 @@ export function AppShell({ children, breadcrumbs }: AppShellProps) {
           navigation={<Sidebar />}
           breadcrumbs={breadcrumbs}
           content={children}
+          contentType={contentType}
+          splitPanel={splitPanel}
+          splitPanelOpen={splitPanelOpen}
+          onSplitPanelToggle={onSplitPanelToggle}
+          splitPanelSize={splitPanelSize}
+          onSplitPanelResize={onSplitPanelResize}
+          splitPanelPreferences={splitPanelPreferences}
+          onSplitPanelPreferencesChange={onSplitPanelPreferencesChange}
           toolsHide={true}
           headerSelector="#top-nav"
         />

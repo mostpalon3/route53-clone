@@ -10,7 +10,7 @@ export function TopNav() {
   const { logout, user } = useAuth();
   const router = useRouter();
 
-  const handleUtilityClick = async (event: any) => {
+  const handleUtilityClick = async (event: CustomEvent<{ id: string }>) => {
     if (event.detail.id === 'logout') {
       await logout();
       router.push('/login');
@@ -79,10 +79,10 @@ export function TopNav() {
           items: [
             { id: "profile", text: "Profile" },
             { id: "logout", text: "Sign out" }
-          ]
+          ],
+          onItemClick: handleUtilityClick
         }
       ]}
-      onUtilityClick={handleUtilityClick}
       i18nStrings={{
         searchIconAriaLabel: "Search",
         searchDismissIconAriaLabel: "Close search",

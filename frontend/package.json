@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@cloudscape-design/collection-hooks": "^1.0.100",
     "@cloudscape-design/components": "^3.0.1325",
     "@cloudscape-design/global-styles": "^1.0.62",
     "@hookform/resolvers": "^5.4.0",
