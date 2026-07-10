@@ -7,14 +7,15 @@ import { HostedZoneHeader } from '@/components/dns-record/HostedZoneHeader';
 import { HostedZoneAccordion } from '@/components/dns-record/HostedZoneAccordion';
 import { HostedZoneTabs } from '@/components/dns-record/HostedZoneTabs';
 import { RecordInspector } from '@/components/dns-record/RecordInspector';
-import { CreateRecordPanel } from '@/components/dns-record/CreateRecordPanel';
 import { RecordsTable } from '@/components/dns-record/RecordsTable';
+import { DeleteRecordModal } from '@/components/dns-record/DeleteRecordModal';
 import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 
 export default function HostedZoneDetailsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const zoneId = params.id as string;
   const isNew = searchParams.get('new') === 'true';
 
@@ -26,12 +27,23 @@ export default function HostedZoneDetailsPage() {
   const [splitPanelOpen, setSplitPanelOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(isNew);
   const [splitPanelPreferences, setSplitPanelPreferences] = useState({ position: 'side' });
-  const [isCreatingRecord, setIsCreatingRecord] = useState(false);
   const [showCreatedSuccess, setShowCreatedSuccess] = useState(false);
   
   // Edit state
   const [isEditingRecord, setIsEditingRecord] = useState(false);
   const [showUpdatedSuccess, setShowUpdatedSuccess] = useState(false);
+
+  // Delete state
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [recordsToDelete, setRecordsToDelete] = useState<DnsRecord[]>([]);
+  const [showDeletedSuccess, setShowDeletedSuccess] = useState(false);
+  const [deletedCount, setDeletedCount] = useState(0);
+
+  // Fix SSR hydration mismatch for Cloudscape Modal portals
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // When selection changes, cancel edit mode
   const handleSelectionChange = useCallback((items: DnsRecord[]) => {
@@ -51,6 +63,29 @@ export default function HostedZoneDetailsPage() {
     setShowUpdatedSuccess(true);
   };
 
+  const handleDeleteRecords = () => {
+    const idsToDelete = new Set(recordsToDelete.map(r => r.id));
+    setRecords(prev => prev.filter(r => !idsToDelete.has(r.id)));
+    
+    const newSelectedItems = selectedItems.filter(r => !idsToDelete.has(r.id));
+    setSelectedItems(newSelectedItems);
+    
+    if (newSelectedItems.length === 0) {
+      setIsEditingRecord(false);
+      setSplitPanelOpen(false);
+    }
+    
+    setDeletedCount(recordsToDelete.length);
+    setShowDeletedSuccess(true);
+    setDeleteModalVisible(false);
+    setRecordsToDelete([]);
+  };
+
+  const openDeleteModal = (records: DnsRecord[]) => {
+    setRecordsToDelete(records);
+    setDeleteModalVisible(true);
+  };
+
   return (
     <AppShell
       breadcrumbs={
@@ -58,13 +93,16 @@ export default function HostedZoneDetailsPage() {
           items={[
             { text: 'Route 53', href: '/' },
             { text: 'Hosted zones', href: '/hosted-zones' },
-            { text: zoneName, href: `/hosted-zones/${zoneId}` },
-            ...(isCreatingRecord ? [{ text: 'Create record', href: '#' }] : [])
+            { text: zoneName, href: `/hosted-zones/${zoneId}` }
           ]}
+          onFollow={e => {
+            e.preventDefault();
+            router.push(e.detail.href);
+          }}
           ariaLabel="Breadcrumbs"
         />
       }
-      splitPanelOpen={!isCreatingRecord && splitPanelOpen}
+      splitPanelOpen={splitPanelOpen}
       onSplitPanelToggle={({ detail }) => setSplitPanelOpen(detail.open)}
       splitPanelPreferences={splitPanelPreferences as any}
       onSplitPanelPreferencesChange={({ detail }) => setSplitPanelPreferences(detail)}
@@ -96,7 +134,7 @@ export default function HostedZoneDetailsPage() {
       }
     >
       <SpaceBetween size="l">
-        {showSuccess && !isCreatingRecord && (
+        {showSuccess && (
           <Flashbar
             items={[
               {
@@ -109,7 +147,7 @@ export default function HostedZoneDetailsPage() {
             ]}
           />
         )}
-        {showCreatedSuccess && !isCreatingRecord && (
+        {showCreatedSuccess && (
           <Flashbar
             items={[
               {
@@ -122,7 +160,7 @@ export default function HostedZoneDetailsPage() {
             ]}
           />
         )}
-        {showUpdatedSuccess && !isCreatingRecord && (
+        {showUpdatedSuccess && (
           <Flashbar
             items={[
               {
@@ -135,39 +173,38 @@ export default function HostedZoneDetailsPage() {
             ]}
           />
         )}
-
-        {!isCreatingRecord ? (
-          <>
-            <HostedZoneHeader zoneName={zoneName} />
-            <HostedZoneAccordion zoneName={zoneName} />
-            <HostedZoneTabs
-              zoneName={zoneName}
-              records={records}
-              onCreateRecord={() => setIsCreatingRecord(true)}
-              onSelectionChange={handleSelectionChange}
-            />
-          </>
-        ) : (
-          <>
-            <CreateRecordPanel 
-              zoneName={zoneName}
-              onCancel={() => setIsCreatingRecord(false)}
-              onSuccess={(newRecord) => {
-                setRecords(prev => [newRecord, ...prev]);
-                setIsCreatingRecord(false);
-                setShowCreatedSuccess(true);
-              }}
-            />
-            <div style={{ marginTop: '16px' }}>
-              <RecordsTable 
-                zoneName={zoneName} 
-                records={records} 
-                onSelectionChange={() => {}} 
-              />
-            </div>
-          </>
+        {showDeletedSuccess && (
+          <Flashbar
+            items={[
+              {
+                type: 'success',
+                content: `${deletedCount} DNS record${deletedCount > 1 ? 's' : ''} deleted successfully.`,
+                dismissible: true,
+                onDismiss: () => setShowDeletedSuccess(false),
+                id: 'record_delete_success',
+              }
+            ]}
+          />
         )}
+
+        <HostedZoneHeader zoneName={zoneName} />
+        <HostedZoneAccordion zoneName={zoneName} />
+        <HostedZoneTabs
+          zoneName={zoneName}
+          records={records}
+          onCreateRecord={() => router.push(`/hosted-zones/${zoneId}/create-record`)}
+          onSelectionChange={handleSelectionChange}
+          onDeleteRecord={openDeleteModal}
+        />
       </SpaceBetween>
+      {mounted && (
+        <DeleteRecordModal
+          visible={deleteModalVisible}
+          onDismiss={() => setDeleteModalVisible(false)}
+          onDelete={handleDeleteRecords}
+          recordsToDelete={recordsToDelete}
+        />
+      )}
     </AppShell>
   );
 }

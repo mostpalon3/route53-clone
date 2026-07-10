@@ -10,16 +10,17 @@ interface HostedZoneTabsProps {
   records: DnsRecord[];
   onSelectionChange: (selectedItems: DnsRecord[]) => void;
   onCreateRecord?: () => void;
+  onDeleteRecord?: (recordsToDelete: DnsRecord[]) => void;
 }
 
-export function HostedZoneTabs({ zoneName, records, onSelectionChange, onCreateRecord }: HostedZoneTabsProps) {
+export function HostedZoneTabs({ zoneName, records, onSelectionChange, onCreateRecord, onDeleteRecord }: HostedZoneTabsProps) {
   return (
     <Tabs
       tabs={[
         {
           label: `Records (${records.length})`,
           id: "records",
-          content: <RecordsTable zoneName={zoneName} records={records} onSelectionChange={onSelectionChange} onCreateRecord={onCreateRecord} />
+          content: <RecordsTable zoneName={zoneName} records={records} onSelectionChange={onSelectionChange} onCreateRecord={onCreateRecord} onDeleteRecord={onDeleteRecord} />
         },
         {
           label: "Accelerated recovery",

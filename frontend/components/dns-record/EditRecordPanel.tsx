@@ -33,7 +33,7 @@ export function EditRecordPanel({ record, zoneName, onCancel, onSuccess }: EditR
   };
 
   return (
-    <Box padding={{ top: 'm', bottom: 'm', horizontal: 'l' }}>
+    <div style={{ overflowY: 'auto', height: '100%', padding: '20px' }}>
       <RecordEditor
         record={record}
         rootDomain={zoneName}
@@ -41,6 +41,6 @@ export function EditRecordPanel({ record, zoneName, onCancel, onSuccess }: EditR
         onCancel={onCancel}
         onSubmit={handleSubmit}
       />
-    </Box>
+    </div>
   );
 }

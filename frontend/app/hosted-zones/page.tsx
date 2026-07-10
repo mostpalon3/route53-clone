@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import { BreadcrumbGroup, SplitPanel } from '@cloudscape-design/components';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { HostedZoneTable } from '@/components/hosted-zone/HostedZoneTable';
 import { HostedZoneInspector } from '@/components/hosted-zone/HostedZoneInspector';
 import { HostedZone } from '@/mock/hostedZones';
 
 export default function HostedZonesPage() {
+  const router = useRouter();
   const [selectedItems, setSelectedItems] = useState<HostedZone[]>([]);
   const [splitPanelOpen, setSplitPanelOpen] = useState(false);
   const [splitPanelPreferences, setSplitPanelPreferences] = useState({ position: 'side' });
@@ -21,6 +23,10 @@ export default function HostedZonesPage() {
             { text: 'Route 53', href: '/' },
             { text: 'Hosted zones', href: '/hosted-zones' },
           ]}
+          onFollow={e => {
+            e.preventDefault();
+            router.push(e.detail.href);
+          }}
           ariaLabel="Breadcrumbs"
         />
       }

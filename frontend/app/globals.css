@@ -16,3 +16,8 @@ body {
 body {
   min-height: 100vh;
 }
+
+/* Hide default AppLayout navigation toggle since we have our custom one in the breadcrumb bar */
+.hide-default-applayout-toggle [class*="navigation-toggle"] {
+  display: none !important;
+}

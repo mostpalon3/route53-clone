@@ -23,6 +23,7 @@ interface RecordEditorProps {
   isAwsManaged: boolean;
   onCancel: () => void;
   onSubmit: (data: RecordFormData) => void;
+  hideActions?: boolean;
 }
 
 const RECORD_TYPES = [
@@ -39,7 +40,7 @@ const RECORD_TYPES = [
   { label: 'SOA – Start of authority record', value: 'SOA' },
 ];
 
-export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSubmit }: RecordEditorProps) {
+export function RecordEditor({ record, rootDomain, isAwsManaged = false, onCancel, onSubmit, hideActions = false }: RecordEditorProps) {
   // Initialize state from existing record
   const [data, setData] = useState<RecordFormData>({
     name: record.name.replace(`.${rootDomain}`, '').replace(rootDomain, ''),
@@ -60,8 +61,6 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (isAwsManaged) return;
 
     let valueError = validateRecordValue(data.type, data.value);
     // Allow empty value for alias, or custom validation
@@ -85,8 +84,12 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
       <Form
         actions={
           <SpaceBetween direction="horizontal" size="xs">
-            <Button variant="link" onClick={onCancel}>Cancel</Button>
-            <Button variant="primary" formAction="submit" disabled={isAwsManaged}>Save</Button>
+            {!hideActions && (
+              <>
+                <Button variant="link" onClick={onCancel}>Cancel</Button>
+                <Button variant="primary" formAction="submit">Save</Button>
+              </>
+            )}
           </SpaceBetween>
         }
       >
@@ -117,7 +120,6 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
           <Toggle
             checked={data.isAlias}
             onChange={({ detail }) => handleChange('isAlias', detail.checked)}
-            disabled={isAwsManaged}
           >
             Alias
           </Toggle>
@@ -128,9 +130,6 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
               onChange={handleChange}
               errorText={errors.value}
             />
-            {isAwsManaged && (
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, cursor: 'not-allowed', background: 'transparent' }} />
-            )}
           </Box>
 
           <FormField
@@ -143,12 +142,11 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
               <Input
                 value={data.ttl}
                 onChange={({ detail }) => handleChange('ttl', detail.value)}
-                disabled={isAwsManaged}
               />
               <SpaceBetween direction="horizontal" size="xs">
-                <Button disabled={isAwsManaged} onClick={() => handleChange('ttl', '60')}>1m</Button>
-                <Button disabled={isAwsManaged} onClick={() => handleChange('ttl', '3600')}>1h</Button>
-                <Button disabled={isAwsManaged} onClick={() => handleChange('ttl', '86400')}>1d</Button>
+                <Button onClick={() => handleChange('ttl', '60')}>1m</Button>
+                <Button onClick={() => handleChange('ttl', '3600')}>1h</Button>
+                <Button onClick={() => handleChange('ttl', '86400')}>1d</Button>
               </SpaceBetween>
             </div>
           </FormField>
@@ -166,7 +164,6 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
                 { label: 'Latency routing', value: 'Latency routing' },
                 { label: 'Failover routing', value: 'Failover routing' },
               ]}
-              disabled={isAwsManaged}
             />
           </FormField>
           
@@ -174,7 +171,6 @@ export function RecordEditor({ record, rootDomain, isAwsManaged, onCancel, onSub
             <Input
               value={data.comment || ''}
               onChange={({ detail }) => handleChange('comment', detail.value)}
-              disabled={isAwsManaged}
             />
           </FormField>
         </SpaceBetween>

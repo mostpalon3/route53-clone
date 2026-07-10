@@ -7,7 +7,8 @@ import {
   SpaceBetween,
   Button,
   Header,
-  Icon
+  Icon,
+  Popover
 } from '@cloudscape-design/components';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
@@ -18,6 +19,8 @@ interface RecordsTableProps {
   zoneName: string;
   records: DnsRecord[];
   onCreateRecord?: () => void;
+  onDeleteRecord?: (recordsToDelete: DnsRecord[]) => void;
+  hideActions?: boolean;
 }
 
 const columnDefinitions = [
@@ -66,7 +69,7 @@ const columnDefinitions = [
   },
 ];
 
-export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRecord }: RecordsTableProps) {
+export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRecord, onDeleteRecord, hideActions = false }: RecordsTableProps) {
   const { items: collectionItems, filterProps, collectionProps } = useCollection(
     records,
     {
@@ -97,12 +100,45 @@ export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRec
     }
   );
 
-  const isSelectionEmpty = !collectionProps.selectedItems || collectionProps.selectedItems.length === 0;
+  const selectedItems = (collectionProps.selectedItems as DnsRecord[]) || [];
+  const isSelectionEmpty = selectedItems.length === 0;
+  const isOnlyProtectedSelected = selectedItems.length > 0 && selectedItems.every(r => r.type === 'NS' || r.type === 'SOA');
+
+  const getDeleteButton = () => {
+    const btn = (
+      <Button 
+        disabled={isSelectionEmpty || isOnlyProtectedSelected}
+        onClick={() => {
+          if (!isSelectionEmpty && !isOnlyProtectedSelected) {
+            onDeleteRecord?.(selectedItems.filter(r => r.type !== 'NS' && r.type !== 'SOA'));
+          }
+        }}
+      >
+        Delete record
+      </Button>
+    );
+
+    if (isOnlyProtectedSelected) {
+      return (
+        <Popover
+          position="top"
+          size="medium"
+          triggerType="custom"
+          content="This AWS-managed record cannot be deleted."
+        >
+          <span style={{ display: 'inline-block', cursor: 'not-allowed' }}>
+            {btn}
+          </span>
+        </Popover>
+      );
+    }
+    return btn;
+  };
 
   // Sync selection outwards
   React.useEffect(() => {
-    onSelectionChange(collectionProps.selectedItems as DnsRecord[] || []);
-  }, [collectionProps.selectedItems, onSelectionChange]);
+    onSelectionChange(selectedItems);
+  }, [selectedItems, onSelectionChange]);
 
   return (
     <Table
@@ -139,12 +175,14 @@ export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRec
             </span>
           }
           actions={
-            <SpaceBetween direction="horizontal" size="xs">
-              <Button iconName="refresh" ariaLabel="Refresh" />
-              <Button disabled={isSelectionEmpty}>Delete record</Button>
-              <Button>Import zone file</Button>
-              <Button variant="primary" onClick={onCreateRecord}>Create record</Button>
-            </SpaceBetween>
+            !hideActions && (
+              <SpaceBetween direction="horizontal" size="xs">
+                <Button iconName="refresh" ariaLabel="Refresh" />
+                {getDeleteButton()}
+                <Button>Import zone file</Button>
+                <Button variant="primary" onClick={onCreateRecord}>Create record</Button>
+              </SpaceBetween>
+            )
           }
         >
           Records <Icon name="status-info" variant="link" />
