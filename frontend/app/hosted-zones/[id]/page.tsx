@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BreadcrumbGroup, SplitPanel, SpaceBetween, Flashbar } from '@cloudscape-design/components';
 import { AppShell } from '@/components/layout/AppShell';
 import { HostedZoneHeader } from '@/components/dns-record/HostedZoneHeader';
 import { HostedZoneAccordion } from '@/components/dns-record/HostedZoneAccordion';
 import { HostedZoneTabs } from '@/components/dns-record/HostedZoneTabs';
 import { RecordInspector } from '@/components/dns-record/RecordInspector';
-import { DnsRecord } from '@/mock/records';
+import { CreateRecordPanel } from '@/components/dns-record/CreateRecordPanel';
+import { RecordsTable } from '@/components/dns-record/RecordsTable';
+import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
 import { useParams, useSearchParams } from 'next/navigation';
 
 export default function HostedZoneDetailsPage() {
@@ -19,10 +21,35 @@ export default function HostedZoneDetailsPage() {
   // Decode or mock the zone name based on the ID for visual fidelity
   const zoneName = 'textinsightpro.netlify.app';
 
+  const [records, setRecords] = useState<DnsRecord[]>(MOCK_RECORDS);
   const [selectedItems, setSelectedItems] = useState<DnsRecord[]>([]);
   const [splitPanelOpen, setSplitPanelOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(isNew);
   const [splitPanelPreferences, setSplitPanelPreferences] = useState({ position: 'side' });
+  const [isCreatingRecord, setIsCreatingRecord] = useState(false);
+  const [showCreatedSuccess, setShowCreatedSuccess] = useState(false);
+  
+  // Edit state
+  const [isEditingRecord, setIsEditingRecord] = useState(false);
+  const [showUpdatedSuccess, setShowUpdatedSuccess] = useState(false);
+
+  // When selection changes, cancel edit mode
+  const handleSelectionChange = useCallback((items: DnsRecord[]) => {
+    setSelectedItems(items);
+    setIsEditingRecord(false);
+    if (items.length > 0) {
+      setSplitPanelOpen(true);
+    } else {
+      setSplitPanelOpen(false);
+    }
+  }, []);
+
+  const handleUpdateRecord = (updatedRecord: DnsRecord) => {
+    setRecords(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+    setSelectedItems([updatedRecord]); // keep it selected with new values
+    setIsEditingRecord(false);
+    setShowUpdatedSuccess(true);
+  };
 
   return (
     <AppShell
@@ -32,17 +59,18 @@ export default function HostedZoneDetailsPage() {
             { text: 'Route 53', href: '/' },
             { text: 'Hosted zones', href: '/hosted-zones' },
             { text: zoneName, href: `/hosted-zones/${zoneId}` },
+            ...(isCreatingRecord ? [{ text: 'Create record', href: '#' }] : [])
           ]}
           ariaLabel="Breadcrumbs"
         />
       }
-      splitPanelOpen={splitPanelOpen}
+      splitPanelOpen={!isCreatingRecord && splitPanelOpen}
       onSplitPanelToggle={({ detail }) => setSplitPanelOpen(detail.open)}
       splitPanelPreferences={splitPanelPreferences as any}
       onSplitPanelPreferencesChange={({ detail }) => setSplitPanelPreferences(detail)}
       splitPanel={
         <SplitPanel
-          header="Record details"
+          header={isEditingRecord ? "Edit record" : "Record details"}
           i18nStrings={{
             preferencesTitle: 'Split panel preferences',
             preferencesPositionLabel: 'Split panel position',
@@ -56,12 +84,19 @@ export default function HostedZoneDetailsPage() {
             resizeHandleAriaLabel: 'Resize split panel',
           }}
         >
-          <RecordInspector selectedItems={selectedItems} />
+          <RecordInspector 
+            selectedItems={selectedItems} 
+            zoneName={zoneName}
+            isEditing={isEditingRecord}
+            onEdit={() => setIsEditingRecord(true)}
+            onCancelEdit={() => setIsEditingRecord(false)}
+            onUpdateRecord={handleUpdateRecord}
+          />
         </SplitPanel>
       }
     >
       <SpaceBetween size="l">
-        {showSuccess && (
+        {showSuccess && !isCreatingRecord && (
           <Flashbar
             items={[
               {
@@ -74,19 +109,64 @@ export default function HostedZoneDetailsPage() {
             ]}
           />
         )}
-        <HostedZoneHeader zoneName={zoneName} />
-        <HostedZoneAccordion zoneName={zoneName} />
-        <HostedZoneTabs
-          zoneName={zoneName}
-          onSelectionChange={(items) => {
-            setSelectedItems(items);
-            if (items.length > 0) {
-              setSplitPanelOpen(true);
-            } else {
-              setSplitPanelOpen(false);
-            }
-          }}
-        />
+        {showCreatedSuccess && !isCreatingRecord && (
+          <Flashbar
+            items={[
+              {
+                type: 'success',
+                content: 'DNS Record created successfully.',
+                dismissible: true,
+                onDismiss: () => setShowCreatedSuccess(false),
+                id: 'record_success',
+              }
+            ]}
+          />
+        )}
+        {showUpdatedSuccess && !isCreatingRecord && (
+          <Flashbar
+            items={[
+              {
+                type: 'success',
+                content: 'DNS Record updated successfully.',
+                dismissible: true,
+                onDismiss: () => setShowUpdatedSuccess(false),
+                id: 'record_update_success',
+              }
+            ]}
+          />
+        )}
+
+        {!isCreatingRecord ? (
+          <>
+            <HostedZoneHeader zoneName={zoneName} />
+            <HostedZoneAccordion zoneName={zoneName} />
+            <HostedZoneTabs
+              zoneName={zoneName}
+              records={records}
+              onCreateRecord={() => setIsCreatingRecord(true)}
+              onSelectionChange={handleSelectionChange}
+            />
+          </>
+        ) : (
+          <>
+            <CreateRecordPanel 
+              zoneName={zoneName}
+              onCancel={() => setIsCreatingRecord(false)}
+              onSuccess={(newRecord) => {
+                setRecords(prev => [newRecord, ...prev]);
+                setIsCreatingRecord(false);
+                setShowCreatedSuccess(true);
+              }}
+            />
+            <div style={{ marginTop: '16px' }}>
+              <RecordsTable 
+                zoneName={zoneName} 
+                records={records} 
+                onSelectionChange={() => {}} 
+              />
+            </div>
+          </>
+        )}
       </SpaceBetween>
     </AppShell>
   );

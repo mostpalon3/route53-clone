@@ -20,6 +20,7 @@ export function RecordFilters({ filteringText, onChange }: RecordFiltersProps) {
       </div>
       <Select
         selectedOption={null}
+        onChange={() => {}}
         options={[
           { label: 'A', value: 'A' },
           { label: 'CNAME', value: 'CNAME' },
@@ -29,6 +30,7 @@ export function RecordFilters({ filteringText, onChange }: RecordFiltersProps) {
       />
       <Select
         selectedOption={null}
+        onChange={() => {}}
         options={[
           { label: 'Simple', value: 'Simple' },
           { label: 'Weighted', value: 'Weighted' },
@@ -37,6 +39,7 @@ export function RecordFilters({ filteringText, onChange }: RecordFiltersProps) {
       />
       <Select
         selectedOption={null}
+        onChange={() => {}}
         options={[
           { label: 'Yes', value: 'Yes' },
           { label: 'No', value: 'No' },

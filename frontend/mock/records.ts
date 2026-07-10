@@ -7,6 +7,7 @@ export interface DnsRecord {
   alias: string;
   value: string;
   ttl: string;
+  comment?: string;
 }
 
 export const MOCK_RECORDS: DnsRecord[] = [

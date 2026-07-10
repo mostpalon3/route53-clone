@@ -7,17 +7,19 @@ import { DnsRecord } from '@/mock/records';
 
 interface HostedZoneTabsProps {
   zoneName: string;
+  records: DnsRecord[];
   onSelectionChange: (selectedItems: DnsRecord[]) => void;
+  onCreateRecord?: () => void;
 }
 
-export function HostedZoneTabs({ zoneName, onSelectionChange }: HostedZoneTabsProps) {
+export function HostedZoneTabs({ zoneName, records, onSelectionChange, onCreateRecord }: HostedZoneTabsProps) {
   return (
     <Tabs
       tabs={[
         {
-          label: "Records (2)",
+          label: `Records (${records.length})`,
           id: "records",
-          content: <RecordsTable zoneName={zoneName} onSelectionChange={onSelectionChange} />
+          content: <RecordsTable zoneName={zoneName} records={records} onSelectionChange={onSelectionChange} onCreateRecord={onCreateRecord} />
         },
         {
           label: "Accelerated recovery",

@@ -4,11 +4,25 @@ import React from 'react';
 import { Box, Button, SpaceBetween, ColumnLayout } from '@cloudscape-design/components';
 import { DnsRecord } from '@/mock/records';
 
+import { EditRecordPanel } from './EditRecordPanel';
+
 interface RecordInspectorProps {
   selectedItems: DnsRecord[];
+  zoneName: string;
+  isEditing?: boolean;
+  onEdit?: () => void;
+  onCancelEdit?: () => void;
+  onUpdateRecord?: (updatedRecord: DnsRecord) => void;
 }
 
-export function RecordInspector({ selectedItems }: RecordInspectorProps) {
+export function RecordInspector({ 
+  selectedItems, 
+  zoneName, 
+  isEditing, 
+  onEdit, 
+  onCancelEdit, 
+  onUpdateRecord 
+}: RecordInspectorProps) {
   if (selectedItems.length === 0) {
     return (
       <Box margin={{ vertical: 'm' }} textAlign="center" color="text-body-secondary">
@@ -28,11 +42,22 @@ export function RecordInspector({ selectedItems }: RecordInspectorProps) {
 
   const record = selectedItems[0];
 
+  if (isEditing) {
+    return (
+      <EditRecordPanel
+        record={record}
+        zoneName={zoneName}
+        onCancel={onCancelEdit!}
+        onSuccess={onUpdateRecord!}
+      />
+    );
+  }
+
   return (
     <Box padding={{ top: 'm', bottom: 'm', horizontal: 'l' }}>
       <SpaceBetween size="l">
         <SpaceBetween size="m" direction="horizontal" alignItems="center">
-          <Button>Edit record</Button>
+          <Button onClick={onEdit}>Edit record</Button>
         </SpaceBetween>
 
         <SpaceBetween size="s">

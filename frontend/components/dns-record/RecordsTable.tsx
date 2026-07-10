@@ -16,6 +16,8 @@ import { RecordFilters } from './RecordFilters';
 interface RecordsTableProps {
   onSelectionChange: (selectedItems: DnsRecord[]) => void;
   zoneName: string;
+  records: DnsRecord[];
+  onCreateRecord?: () => void;
 }
 
 const columnDefinitions = [
@@ -64,11 +66,9 @@ const columnDefinitions = [
   },
 ];
 
-export function RecordsTable({ onSelectionChange, zoneName }: RecordsTableProps) {
-  const [items] = useState<DnsRecord[]>(MOCK_RECORDS);
-
+export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRecord }: RecordsTableProps) {
   const { items: collectionItems, filterProps, collectionProps } = useCollection(
-    items,
+    records,
     {
       filtering: {
         empty: (
@@ -132,7 +132,7 @@ export function RecordsTable({ onSelectionChange, zoneName }: RecordsTableProps)
       header={
         <Header
           variant="h2"
-          counter={`(${items.length}/2)`}
+          counter={`(${records.length})`}
           description={
             <span>
               The following table lists the existing records in {zoneName}. You can&apos;t delete the SOA record or the NS record named {zoneName}.
@@ -143,7 +143,7 @@ export function RecordsTable({ onSelectionChange, zoneName }: RecordsTableProps)
               <Button iconName="refresh" ariaLabel="Refresh" />
               <Button disabled={isSelectionEmpty}>Delete record</Button>
               <Button>Import zone file</Button>
-              <Button variant="primary">Create record</Button>
+              <Button variant="primary" onClick={onCreateRecord}>Create record</Button>
             </SpaceBetween>
           }
         >
