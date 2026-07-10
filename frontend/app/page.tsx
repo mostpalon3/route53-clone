@@ -1,65 +1,183 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from 'react';
+import { SpaceBetween, Container, Header, Button, Link, ColumnLayout, Box, Icon } from '@cloudscape-design/components';
+import { AppShell } from '@/components/layout/AppShell';
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <AppShell>
+      <div style={{ padding: '24px 32px' }}>
+        <SpaceBetween size="xl">
+
+          {/* ── HERO SECTION: full width, 2 columns ── */}
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+            {/* Left: heading + How it works */}
+            <div style={{ flex: '1 1 0' }}>
+              <Box variant="span" color="text-body-secondary" fontSize="body-s">
+                Network &amp; Content Delivery
+              </Box>
+              <h1 style={{ fontSize: '32px', margin: '8px 0 12px', fontWeight: 700 }}>
+                Amazon Route 53
+              </h1>
+              <p style={{ fontSize: '22px', margin: '0 0 12px', fontWeight: 300 }}>
+                A reliable way to route users to internet applications
+              </p>
+              <p style={{ fontSize: '14px', margin: '0 0 24px', color: '#d1d5db', maxWidth: '560px' }}>
+                Amazon Route 53 is a highly available and scalable cloud Domain Name System (DNS) web service.
+              </p>
+              <Container header={<Header variant="h2">How it works</Header>}>
+                <iframe
+                  width="100%"
+                  height="320"
+                  src="https://www.youtube.com/embed/RGWgfhZByAI"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{ display: 'block', borderRadius: '6px' }}
+                />
+              </Container>
+            </div>
+
+            {/* Right: action cards */}
+            <div style={{ flex: '0 0 340px', minWidth: '280px' }}>
+              <SpaceBetween size="s">
+                <Container header={<Header variant="h2">Get started with Route 53</Header>}>
+                  <SpaceBetween size="m">
+                    <Box variant="p" color="text-body-secondary">
+                      Get started by registering a domain, configuring DNS, or using another Route 53 feature.
+                    </Box>
+                    <Button variant="primary">Get started</Button>
+                  </SpaceBetween>
+                </Container>
+
+                <Container header={<Header variant="h2">Pricing (US)</Header>}>
+                  <Link external href="#">View pricing</Link>
+                </Container>
+
+                <Container header={<Header variant="h2">More resources <Icon name="external" size="inherit" /></Header>}>
+                  <SpaceBetween size="xs">
+                    <Link href="#">Documentation</Link>
+                    <hr style={{ border: 'none', borderTop: '1px solid #2d3748', margin: '4px 0' }} />
+                    <Link href="#">API reference</Link>
+                    <hr style={{ border: 'none', borderTop: '1px solid #2d3748', margin: '4px 0' }} />
+                    <Link href="#">FAQs</Link>
+                    <hr style={{ border: 'none', borderTop: '1px solid #2d3748', margin: '4px 0' }} />
+                    <Link href="#">Forum - DNS and health checks</Link>
+                    <hr style={{ border: 'none', borderTop: '1px solid #2d3748', margin: '4px 0' }} />
+                    <Link href="#">Forum - Domain name registration</Link>
+                  </SpaceBetween>
+                </Container>
+              </SpaceBetween>
+            </div>
+          </div>
+
+          {/* ── MAIN CONTENT: 68% left + 32% empty right ── */}
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+
+            {/* Left column: all sections stacked */}
+            <div style={{ flex: '0 0 68%', minWidth: 0 }}>
+              <SpaceBetween size="l">
+
+                <Container header={<Header variant="h2">Products</Header>}>
+                  <SpaceBetween size="l">
+                    {[
+                      { title: 'Domain names', desc: 'A domain is the name, such as example.com, that your users use to access your application.' },
+                      { title: 'Hosted zones', desc: 'Specify how you want Route 53 to respond to DNS queries for a domain such as example.com.' },
+                      { title: 'Health checks', desc: 'Monitor your applications and web resources, and direct DNS queries to healthy resources.' },
+                      { title: 'Traffic flow', desc: 'Use a visual tool to create policies for multiple endpoints in complex configurations.' },
+                      { title: 'Resolver', desc: 'Route DNS queries between your VPCs and your network.' },
+                    ].map((prod, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                        <div style={{
+                          width: '64px', height: '64px', flexShrink: 0,
+                          backgroundColor: '#1f2a37', borderRadius: '6px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <img src="/assets/route53.svg" width="36" height="36" alt="" />
+                        </div>
+                        <div>
+                          <Box variant="h4" padding={{ bottom: 'xs' }}>{prod.title}</Box>
+                          <Box variant="p" color="text-body-secondary">{prod.desc}</Box>
+                        </div>
+                      </div>
+                    ))}
+                  </SpaceBetween>
+                </Container>
+
+                <Container header={<Header variant="h2">Benefits and features</Header>}>
+                  <ColumnLayout columns={2} variant="text-grid">
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Highly available and reliable</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        Amazon Route 53 is built using AWS's highly available and reliable infrastructure. Our distributed DNS servers ensure that you can consistently route your end users to your application.
+                      </Box>
+                    </div>
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Designed for use with other AWS services</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        You can use Amazon Route 53 to map domain names to your Amazon EC2 instances, Amazon S3 buckets, Amazon CloudFront distributions, and other AWS resources.
+                      </Box>
+                    </div>
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Simple</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        You can quickly sign up, and Amazon Route 53 can start to answer your DNS queries within minutes.
+                      </Box>
+                    </div>
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Flexible</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        Amazon Route 53 routes traffic based on multiple criteria, such as endpoint health, geographic location, and latency.
+                      </Box>
+                    </div>
+                  </ColumnLayout>
+                </Container>
+
+                <Container header={<Header variant="h2">Use cases</Header>}>
+                  <ColumnLayout columns={2} variant="text-grid">
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Global traffic management</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        Route 53 Traffic Flow helps you construct sophisticated routing configurations for resources in multiple AWS and non-AWS locations. <Link external href="#">Learn more</Link>
+                      </Box>
+                    </div>
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}>Alias to AWS resources</Box>
+                      <Box variant="p" color="text-body-secondary">
+                        You can use Route 53 alias records to map your zone apex (such as example.com) or a subdomain to selected AWS resources. For example, you can route traffic to ELB load balancers, CloudFront distributions, or S3 buckets configured as website endpoints. <Link external href="#">Learn more</Link>
+                      </Box>
+                    </div>
+                  </ColumnLayout>
+                </Container>
+
+                <Container header={<Header variant="h2">Related services</Header>}>
+                  <ColumnLayout columns={2} variant="text-grid">
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}><Link href="#">Amazon CloudFront</Link></Box>
+                      <Box variant="p" color="text-body-secondary">
+                        To speed up delivery of your web content, you can use Amazon CloudFront, the AWS content delivery network (CDN). CloudFront can deliver your entire website—including dynamic, static, streaming, and interactive content—by using a global network of edge locations. <Link external href="#">Learn more</Link>
+                      </Box>
+                    </div>
+                    <div>
+                      <Box variant="h4" padding={{ bottom: 'xs' }}><Link href="#">Amazon CloudWatch</Link></Box>
+                      <Box variant="p" color="text-body-secondary">
+                        You can use Amazon CloudWatch to monitor the status—healthy or unhealthy—of your Route 53 health checks, and get notifications when the status changes. <Link external href="#">Learn more</Link>
+                      </Box>
+                    </div>
+                  </ColumnLayout>
+                </Container>
+
+              </SpaceBetween>
+            </div>
+
+            {/* Right column: intentionally empty (≈32%) */}
+            <div style={{ flex: '0 0 32%' }} />
+          </div>
+
+        </SpaceBetween>
+      </div>
+    </AppShell>
   );
 }

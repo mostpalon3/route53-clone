@@ -12,6 +12,6 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { id: 'hosted-zones', text: 'Hosted Zones', href: '/hosted-zones', iconName: 'treeview-expand' },
   { id: 'traffic-policies', text: 'Traffic Policies', href: '/traffic-policies', iconName: 'share' },
   { id: 'health-checks', text: 'Health Checks', href: '/health-checks', iconName: 'status-positive' },
-  { id: 'resolver', text: 'Resolver', href: '/resolver', iconName: 'multipage' },
+  { id: 'resolver', text: 'Resolver', href: '/resolver', iconName: 'multiscreen' },
   { id: 'profiles', text: 'Profiles', href: '/profiles', iconName: 'user-profile' },
 ];

@@ -1,37 +1,44 @@
-import { MOCK_USERS } from '../mock/users';
 import { User } from '../types/auth';
-import { saveSession, loadSession, removeSession } from '../lib/auth';
+import { saveToken, loadToken, removeToken } from '../lib/auth';
+import { api } from '../lib/api';
 
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const user = MOCK_USERS.find(u => u.email === email && u.password === password);
-    if (!user) {
-      throw new Error('Invalid email or password');
+    try {
+      const response = await api.post('/login', { email, password });
+      const { access_token, user } = response.data;
+      saveToken(access_token);
+      return user;
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.detail) {
+        throw new Error(error.response.data.detail);
+      }
+      throw new Error('Login failed');
     }
-
-    const { password: _password, ...userWithoutPassword } = user;
-    saveSession(userWithoutPassword);
-    
-    return userWithoutPassword;
   },
 
   logout: async (): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    removeSession();
+    removeToken();
   },
 
-  getCurrentUser: (): User | null => {
-    return loadSession();
+  getCurrentUser: async (): Promise<User | null> => {
+    const token = loadToken();
+    if (!token) return null;
+    try {
+      const response = await api.get('/me');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get current user', error);
+      removeToken();
+      return null;
+    }
   },
 
-  saveSession: (user: User) => {
-    saveSession(user);
+  saveToken: (token: string) => {
+    saveToken(token);
   },
 
   clearSession: () => {
-    removeSession();
+    removeToken();
   }
 };

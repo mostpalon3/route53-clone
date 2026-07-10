@@ -19,7 +19,7 @@ export function Sidebar() {
   return (
     <SideNavigation
       activeHref={pathname}
-      header={{ href: '/dashboard', text: 'Route 53' }}
+      header={{ href: '/', text: 'Route 53' }}
       onFollow={(event) => {
         if (!event.detail.external) {
           event.preventDefault();

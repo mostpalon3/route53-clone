@@ -41,9 +41,20 @@ export function LoginForm() {
     <form onSubmit={handleSubmit}>
       <Form
         actions={
-          <Button variant="primary" loading={loading} formAction="submit">
-            Sign in
-          </Button>
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button
+              formAction="none"
+              onClick={() => {
+                setEmail('admin@example.com');
+                setPassword('password123');
+              }}
+            >
+              Autofill Mock Details
+            </Button>
+            <Button variant="primary" loading={loading} formAction="submit">
+              Sign in
+            </Button>
+          </SpaceBetween>
         }
         errorText={error}
       >

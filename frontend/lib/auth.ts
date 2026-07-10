@@ -1,29 +1,28 @@
 import { User } from '../types/auth';
 
-const SESSION_KEY = 'route53_session';
+const TOKEN_KEY = 'route53_token';
 
-export const saveSession = (user: User): void => {
+export const saveToken = (token: string): void => {
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, token);
   } catch (error) {
-    console.error('Failed to save session', error);
+    console.error('Failed to save token', error);
   }
 };
 
-export const loadSession = (): User | null => {
+export const loadToken = (): string | null => {
   try {
-    const session = localStorage.getItem(SESSION_KEY);
-    return session ? JSON.parse(session) as User : null;
+    return localStorage.getItem(TOKEN_KEY);
   } catch (error) {
-    console.error('Failed to load session', error);
+    console.error('Failed to load token', error);
     return null;
   }
 };
 
-export const removeSession = (): void => {
+export const removeToken = (): void => {
   try {
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(TOKEN_KEY);
   } catch (error) {
-    console.error('Failed to remove session', error);
+    console.error('Failed to remove token', error);
   }
 };
