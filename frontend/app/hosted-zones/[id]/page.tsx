@@ -58,7 +58,11 @@ export default function HostedZoneDetailsPage() {
         .catch(console.error)
         .finally(() => setIsLoadingRecords(false));
     }
-  }, [zone]);
+  }, [zone, searchParams]);
+  React.useEffect(() => {
+    if (isNew) setShowSuccess(true);
+    if (isUpdated) setShowZoneUpdatedSuccess(true);
+  }, [isNew, isUpdated]);
   
   // Edit state
   const [isEditingRecord, setIsEditingRecord] = useState(false);

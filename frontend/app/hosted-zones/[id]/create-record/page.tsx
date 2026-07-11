@@ -101,10 +101,10 @@ export default function CreateRecordPage() {
            alias: form.data.isAlias || false,
            value: form.data.value || '',
            ttl: form.data.ttl === '-' ? undefined : parseInt(form.data.ttl || '300'),
-           comment: form.data.comment
+           evaluate_target_health: form.data.evaluateTargetHealth || false
         });
       }
-      router.push(`/hosted-zones/${zoneId}?new=true`);
+      router.push(`/hosted-zones/${zoneId}?new=true&t=${Date.now()}`);
     } catch (e) {
       console.error('Failed to create records', e);
       alert('Failed to create one or more records. Please check the console.');
