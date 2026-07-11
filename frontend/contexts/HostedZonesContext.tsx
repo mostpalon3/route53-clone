@@ -38,11 +38,7 @@ export function HostedZonesProvider({ children }: { children: ReactNode }) {
   const fetchZones = async () => {
     setIsLoading(true);
     try {
-      // Auto-login for development/testing if no token exists
-      if (!loadToken()) {
-        console.log('No token found, auto-logging in as default admin...');
-        await authService.login('admin@example.com', 'password123');
-      }
+
 
       const data = await hostedZoneService.getHostedZones();
       const mapped: HostedZone[] = data.map(z => ({
