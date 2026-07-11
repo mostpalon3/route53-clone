@@ -87,11 +87,10 @@ export default function CreateRecordPage() {
     setIsSubmitting(true);
     try {
       for (const form of recordForms) {
-        if (!form.data.type || !form.data.value) {
-          // Basic validation to skip completely empty forms
-          if (!form.data.isAlias) {
-            continue; 
-          }
+        if (!form.data.type || (!form.data.isAlias && !form.data.value)) {
+          alert('Please provide a valid record type and value.');
+          setIsSubmitting(false);
+          return;
         }
         
         await dnsRecordService.createRecord(zone.pk, {
