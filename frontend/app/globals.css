@@ -41,3 +41,26 @@ body {
   transform: scale(2);
   transform-origin: center;
 }
+
+/* Custom AWS Yellow/Orange Primary Buttons */
+.aws-yellow-button button[class*="variant-primary"],
+.aws-yellow-button a[class*="variant-primary"] {
+  background: #ff9900 !important;
+  background-color: #ff9900 !important;
+  border-color: #ff9900 !important;
+  color: #16191f !important;
+}
+
+.aws-yellow-button button[class*="variant-primary"]:hover,
+.aws-yellow-button a[class*="variant-primary"]:hover {
+  background: #e88b00 !important;
+  background-color: #e88b00 !important;
+  border-color: #e88b00 !important;
+}
+
+.aws-yellow-button button[class*="variant-primary"]:active,
+.aws-yellow-button a[class*="variant-primary"]:active {
+  background: #cc7a00 !important;
+  background-color: #cc7a00 !important;
+  border-color: #cc7a00 !important;
+}

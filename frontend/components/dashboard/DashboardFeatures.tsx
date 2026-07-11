@@ -35,7 +35,9 @@ export function DashboardFeatures() {
                 <Box color="text-body-secondary">Hosted zones</Box>
               </Box>
             ) : (
-              <Button href="/hosted-zones">Create hosted zone</Button>
+              <span className="aws-yellow-button">
+                <Button variant="primary" href="/hosted-zones">Create hosted zone</Button>
+              </span>
             )}
           </SpaceBetween>
         </Box>

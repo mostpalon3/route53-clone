@@ -88,9 +88,11 @@ export function HostedZoneTable({ onSelectionChange, onDeleteClick }: HostedZone
               <Box variant="p" color="inherit">
                 There are no hosted zones created for this account.
               </Box>
-              <Button onClick={() => router.push('/hosted-zones/new')} variant="primary">
-                Create hosted zone
-              </Button>
+              <span className="aws-yellow-button">
+                <Button onClick={() => router.push('/hosted-zones/new')} variant="primary">
+                  Create hosted zone
+                </Button>
+              </span>
             </SpaceBetween>
           </Box>
         ),
@@ -135,9 +137,11 @@ export function HostedZoneTable({ onSelectionChange, onDeleteClick }: HostedZone
             <Box variant="p" color="inherit">
               There are no hosted zones created for this account.
             </Box>
-            <Button onClick={() => router.push('/hosted-zones/new')} variant="primary">
-              Create hosted zone
-            </Button>
+            <span className="aws-yellow-button">
+              <Button onClick={() => router.push('/hosted-zones/new')} variant="primary">
+                Create hosted zone
+              </Button>
+            </span>
           </SpaceBetween>
         </Box>
       }
@@ -177,12 +181,14 @@ export function HostedZoneTable({ onSelectionChange, onDeleteClick }: HostedZone
               >
                 Delete
               </Button>
-              <Button
-                variant="primary"
-                onClick={() => router.push('/hosted-zones/new')}
-              >
-                Create hosted zone
-              </Button>
+              <span className="aws-yellow-button">
+                <Button
+                  variant="primary"
+                  onClick={() => router.push('/hosted-zones/new')}
+                >
+                  Create hosted zone
+                </Button>
+              </span>
             </SpaceBetween>
           }
         >

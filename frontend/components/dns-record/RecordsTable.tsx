@@ -195,7 +195,9 @@ export function RecordsTable({ onSelectionChange, zoneName, records, onCreateRec
                 <Button iconName="refresh" ariaLabel="Refresh" />
                 {getDeleteButton()}
                 <Button>Import zone file</Button>
-                <Button variant="primary" onClick={onCreateRecord}>Create record</Button>
+                <span className="aws-yellow-button">
+                  <Button variant="primary" onClick={onCreateRecord}>Create record</Button>
+                </span>
               </SpaceBetween>
             )
           }

@@ -171,7 +171,9 @@ export default function HomePage() {
                     <Box variant="p" color="text-body-secondary">
                       Get started by registering a domain, configuring DNS, or using another Route 53 feature.
                     </Box>
-                    <Button variant="primary" href="/get-started">Get started</Button>
+                    <span className="aws-yellow-button">
+                      <Button variant="primary" href="/get-started">Get started</Button>
+                    </span>
                   </SpaceBetween>
                 </Container>
 
