@@ -5,6 +5,7 @@ export interface HostedZone {
   createdBy: string;
   recordCount: number;
   description: string;
+  tags?: { key: string; value: string }[];
 }
 
 export const MOCK_HOSTED_ZONES: HostedZone[] = [

@@ -2,38 +2,44 @@
 
 import React from 'react';
 import { ExpandableSection, ColumnLayout, Box, Button } from '@cloudscape-design/components';
+import { HostedZone } from '@/mock/hostedZones';
+import { useRouter } from 'next/navigation';
 
 interface HostedZoneAccordionProps {
-  zoneName: string;
+  zone: HostedZone | undefined;
 }
 
-export function HostedZoneAccordion({ zoneName }: HostedZoneAccordionProps) {
+export function HostedZoneAccordion({ zone }: HostedZoneAccordionProps) {
+  const router = useRouter();
+
+  if (!zone) return null;
+
   return (
     <ExpandableSection
       headerText="Hosted zone details"
-      headerActions={<Button>Edit hosted zone</Button>}
+      headerActions={<Button onClick={() => router.push(`/hosted-zones/${zone.id}/edit`)}>Edit hosted zone</Button>}
       defaultExpanded={false}
     >
       <ColumnLayout columns={4} variant="text-grid">
         <div>
           <Box variant="awsui-key-label">Hosted zone ID</Box>
-          <div>Z04D3Q382T08ABCDEFGH1</div>
+          <div>{zone.id}</div>
         </div>
         <div>
           <Box variant="awsui-key-label">Created by</Box>
-          <div>arn:aws:iam::926028309602:user/mostpalon3</div>
+          <div>{zone.createdBy}</div>
         </div>
         <div>
           <Box variant="awsui-key-label">Type</Box>
-          <div>Public</div>
+          <div>{zone.type}</div>
         </div>
         <div>
           <Box variant="awsui-key-label">Record count</Box>
-          <div>6</div>
+          <div>{zone.recordCount}</div>
         </div>
         <div>
           <Box variant="awsui-key-label">Comment</Box>
-          <div>-</div>
+          <div>{zone.description || '-'}</div>
         </div>
         <div>
           <Box variant="awsui-key-label">Creation date</Box>

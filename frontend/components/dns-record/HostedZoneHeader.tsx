@@ -5,15 +5,16 @@ import { Header, Badge, Button, SpaceBetween, Box } from '@cloudscape-design/com
 
 interface HostedZoneHeaderProps {
   zoneName: string;
+  onDeleteClick?: () => void;
 }
 
-export function HostedZoneHeader({ zoneName }: HostedZoneHeaderProps) {
+export function HostedZoneHeader({ zoneName, onDeleteClick }: HostedZoneHeaderProps) {
   return (
     <Header
       variant="h1"
       actions={
         <SpaceBetween direction="horizontal" size="xs">
-          <Button>Delete zone</Button>
+          <Button onClick={onDeleteClick}>Delete zone</Button>
           <Button>Test record</Button>
           <Button>Configure query logging</Button>
         </SpaceBetween>

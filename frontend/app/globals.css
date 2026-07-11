@@ -35,3 +35,9 @@ body {
   flex-direction: column;
   justify-content: center;
 }
+
+/* Slightly increase the size of the AWS logo */
+.awsui-top-navigation img[src*="aws.svg"] {
+  transform: scale(2);
+  transform-origin: center;
+}

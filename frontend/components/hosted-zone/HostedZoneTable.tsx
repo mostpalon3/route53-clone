@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Table,
   Box,
@@ -13,14 +13,17 @@ import {
 } from '@cloudscape-design/components';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { useRouter } from 'next/navigation';
-import { HostedZone, MOCK_HOSTED_ZONES, USE_EMPTY_STATE } from '@/mock/hostedZones';
+import { HostedZone, USE_EMPTY_STATE } from '@/mock/hostedZones';
+import { useHostedZones } from '@/contexts/HostedZonesContext';
 
 interface HostedZoneTableProps {
   onSelectionChange?: (selectedItems: HostedZone[]) => void;
+  onDeleteClick?: (selectedItems: HostedZone[]) => void;
 }
 
-export function HostedZoneTable({ onSelectionChange }: HostedZoneTableProps = {}) {
+export function HostedZoneTable({ onSelectionChange, onDeleteClick }: HostedZoneTableProps = {}) {
   const router = useRouter();
+  const { hostedZones } = useHostedZones();
   
   const columnDefinitions = React.useMemo(() => [
     {
@@ -28,7 +31,7 @@ export function HostedZoneTable({ onSelectionChange }: HostedZoneTableProps = {}
       header: 'Hosted zone name',
       cell: (item: HostedZone) => (
         <Link 
-          href={`/hosted-zones/${item.name.replace('.com', '')}`} 
+          href={`/hosted-zones/${item.id}`} 
           onFollow={(e) => {
             e.preventDefault();
             router.push(`/hosted-zones/${item.id}`);
@@ -72,7 +75,7 @@ export function HostedZoneTable({ onSelectionChange }: HostedZoneTableProps = {}
     },
   ], [router]);
 
-  const [items] = useState<HostedZone[]>(USE_EMPTY_STATE ? [] : MOCK_HOSTED_ZONES);
+  const items = USE_EMPTY_STATE ? [] : hostedZones;
 
   const { items: collectionItems, filterProps, collectionProps } = useCollection(
     items,
@@ -107,13 +110,14 @@ export function HostedZoneTable({ onSelectionChange }: HostedZoneTableProps = {}
     }
   );
 
-  const isSelectionEmpty = !collectionProps.selectedItems || collectionProps.selectedItems.length === 0;
+  const selectedItems = (collectionProps.selectedItems as HostedZone[]) || [];
+  const isSelectionEmpty = selectedItems.length === 0;
 
   React.useEffect(() => {
     if (onSelectionChange) {
-      onSelectionChange(collectionProps.selectedItems as HostedZone[] || []);
+      onSelectionChange(selectedItems);
     }
-  }, [collectionProps.selectedItems, onSelectionChange]);
+  }, [selectedItems, onSelectionChange]);
 
   return (
     <Table
@@ -155,9 +159,24 @@ export function HostedZoneTable({ onSelectionChange }: HostedZoneTableProps = {}
           actions={
             <SpaceBetween direction="horizontal" size="xs">
               <Button iconName="refresh" ariaLabel="Refresh" />
-              <Button disabled={isSelectionEmpty}>View details</Button>
-              <Button disabled={isSelectionEmpty}>Edit</Button>
-              <Button disabled={isSelectionEmpty}>Delete</Button>
+              <Button 
+                disabled={isSelectionEmpty}
+                onClick={() => router.push(`/hosted-zones/${selectedItems[0].id}`)}
+              >
+                View details
+              </Button>
+              <Button 
+                disabled={isSelectionEmpty}
+                onClick={() => router.push(`/hosted-zones/${selectedItems[0].id}/edit`)}
+              >
+                Edit
+              </Button>
+              <Button 
+                disabled={isSelectionEmpty}
+                onClick={() => onDeleteClick && onDeleteClick(selectedItems)}
+              >
+                Delete
+              </Button>
               <Button
                 variant="primary"
                 onClick={() => router.push('/hosted-zones/new')}

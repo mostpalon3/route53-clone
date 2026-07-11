@@ -9,8 +9,10 @@ import { HostedZoneTabs } from '@/components/dns-record/HostedZoneTabs';
 import { RecordInspector } from '@/components/dns-record/RecordInspector';
 import { RecordsTable } from '@/components/dns-record/RecordsTable';
 import { DeleteRecordModal } from '@/components/dns-record/DeleteRecordModal';
+import { DeleteHostedZoneModal } from '@/components/hosted-zone/DeleteHostedZoneModal';
 import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import { useHostedZones } from '@/contexts/HostedZonesContext';
 
 export default function HostedZoneDetailsPage() {
   const params = useParams();
@@ -18,14 +20,17 @@ export default function HostedZoneDetailsPage() {
   const router = useRouter();
   const zoneId = params.id as string;
   const isNew = searchParams.get('new') === 'true';
+  const isUpdated = searchParams.get('updated') === 'true';
 
-  // Decode or mock the zone name based on the ID for visual fidelity
-  const zoneName = 'textinsightpro.netlify.app';
+  const { hostedZones, deleteHostedZone } = useHostedZones();
+  const zone = hostedZones.find(z => z.id === zoneId);
+  const zoneName = zone ? zone.name : 'Unknown Zone';
 
   const [records, setRecords] = useState<DnsRecord[]>(MOCK_RECORDS);
   const [selectedItems, setSelectedItems] = useState<DnsRecord[]>([]);
   const [splitPanelOpen, setSplitPanelOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(isNew);
+  const [showZoneUpdatedSuccess, setShowZoneUpdatedSuccess] = useState(isUpdated);
   const [splitPanelPreferences, setSplitPanelPreferences] = useState({ position: 'side' });
   const [showCreatedSuccess, setShowCreatedSuccess] = useState(false);
   
@@ -33,11 +38,14 @@ export default function HostedZoneDetailsPage() {
   const [isEditingRecord, setIsEditingRecord] = useState(false);
   const [showUpdatedSuccess, setShowUpdatedSuccess] = useState(false);
 
-  // Delete state
+  // Delete Record state
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [recordsToDelete, setRecordsToDelete] = useState<DnsRecord[]>([]);
   const [showDeletedSuccess, setShowDeletedSuccess] = useState(false);
   const [deletedCount, setDeletedCount] = useState(0);
+
+  // Delete Zone state
+  const [deleteZoneModalVisible, setDeleteZoneModalVisible] = useState(false);
 
   // Fix SSR hydration mismatch for Cloudscape Modal portals
   const [mounted, setMounted] = React.useState(false);
@@ -84,6 +92,13 @@ export default function HostedZoneDetailsPage() {
   const openDeleteModal = (records: DnsRecord[]) => {
     setRecordsToDelete(records);
     setDeleteModalVisible(true);
+  };
+
+  const handleDeleteZone = () => {
+    if (zone) {
+      deleteHostedZone(zone.id);
+      router.push('/hosted-zones');
+    }
   };
 
   return (
@@ -147,6 +162,19 @@ export default function HostedZoneDetailsPage() {
             ]}
           />
         )}
+        {showZoneUpdatedSuccess && (
+          <Flashbar
+            items={[
+              {
+                type: 'success',
+                content: 'Hosted zone updated successfully.',
+                dismissible: true,
+                onDismiss: () => setShowZoneUpdatedSuccess(false),
+                id: 'zone_update_success',
+              }
+            ]}
+          />
+        )}
         {showCreatedSuccess && (
           <Flashbar
             items={[
@@ -187,8 +215,8 @@ export default function HostedZoneDetailsPage() {
           />
         )}
 
-        <HostedZoneHeader zoneName={zoneName} />
-        <HostedZoneAccordion zoneName={zoneName} />
+        <HostedZoneHeader zoneName={zoneName} onDeleteClick={() => setDeleteZoneModalVisible(true)} />
+        <HostedZoneAccordion zone={zone} />
         <HostedZoneTabs
           zoneName={zoneName}
           records={records}
@@ -198,12 +226,20 @@ export default function HostedZoneDetailsPage() {
         />
       </SpaceBetween>
       {mounted && (
-        <DeleteRecordModal
-          visible={deleteModalVisible}
-          onDismiss={() => setDeleteModalVisible(false)}
-          onDelete={handleDeleteRecords}
-          recordsToDelete={recordsToDelete}
-        />
+        <>
+          <DeleteRecordModal
+            visible={deleteModalVisible}
+            onDismiss={() => setDeleteModalVisible(false)}
+            onDelete={handleDeleteRecords}
+            recordsToDelete={recordsToDelete}
+          />
+          <DeleteHostedZoneModal
+            visible={deleteZoneModalVisible}
+            onDismiss={() => setDeleteZoneModalVisible(false)}
+            onDelete={handleDeleteZone}
+            zone={zone || null}
+          />
+        </>
       )}
     </AppShell>
   );

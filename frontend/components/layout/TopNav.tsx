@@ -51,26 +51,66 @@ export function TopNav() {
         identity={{
           href: "/",
           logo: {
-            src: "/assets/aws.png",
+            src: "/assets/aws.svg",
             alt: "AWS"
           }
         }}
         search={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: '500px', paddingLeft: '8px' }}>
-            <img src="/assets/route53.svg" alt="Route 53" style={{ width: '28px', height: '28px' }} />
-            <div style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px' }}>
-              <svg viewBox="0 0 16 16" width="16" height="16" fill="white">
+          <div style={{ position: 'fixed', top: '8px', left: '72px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 1000 }}>
+            {/* Amazon Q Icon */}
+            <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="24" height="24" rx="6" fill="url(#q-gradient)" />
+                <path d="M12 16.5C14.4853 16.5 16.5 14.4853 16.5 12C16.5 9.51472 14.4853 7.5 12 7.5C9.51472 7.5 7.5 9.51472 7.5 12C7.5 14.4853 9.51472 16.5 12 16.5Z" stroke="white" strokeWidth="2"/>
+                <path d="M15 15L17.5 17.5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="12" cy="12" r="2" fill="white"/>
+                <defs>
+                  <linearGradient id="q-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#7E3AF2" />
+                    <stop offset="1" stopColor="#0073BB" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            {/* Grid Icon */}
+            <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px', borderRadius: '4px' }}>
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="#aab7b8">
                 <path d="M1.5 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V2zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V2zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V2zM1.5 7a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V7zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V7zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V7zM1.5 12a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-2zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5v-2zm5 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2z" />
               </svg>
             </div>
-            <div style={{ flex: 1 }}>
-              <Input
-                type="search"
-                placeholder="Search"
-                ariaLabel="Search"
-                value=""
-                onChange={() => { }}
+            {/* Search Input */}
+            <div style={{ 
+              width: '500px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              backgroundColor: '#16191f', 
+              border: '1px solid #5f6b7a',
+              borderRadius: '16px',
+              padding: '0 12px',
+              height: '32px'
+            }}>
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="#aab7b8" style={{ marginRight: '8px' }}>
+                <path d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415zM6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0-2a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" />
+              </svg>
+              <input 
+                type="text" 
+                placeholder="Search" 
+                style={{ 
+                  flex: 1, 
+                  backgroundColor: 'transparent', 
+                  border: 'none', 
+                  color: '#eaeded', 
+                  outline: 'none',
+                  fontSize: '14px',
+                  fontStyle: 'italic'
+                }} 
               />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#aab7b8', fontSize: '12px' }}>
+                <span>[Option+S]</span>
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0-2A5 5 0 1 0 8 3a5 5 0 0 0 0 10zm.75-5.32l2.36 1.36-.75 1.3-3.11-1.8V4.5h1.5v3.18z"/>
+                </svg>
+              </div>
             </div>
           </div>
         }
@@ -104,7 +144,7 @@ export function TopNav() {
           },
           {
             type: "menu-dropdown",
-            text: user ? user.name : "mostpalon3",
+            text: user ? `${user.name} (926028309602)` : "mostpalon3 (926028309602)",
             description: user ? user.username : "mostpalon3",
             items: [
               { id: "profile", text: "Profile" },
