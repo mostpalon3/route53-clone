@@ -2,7 +2,7 @@ import axios from 'axios';
 import { loadToken } from './auth';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://route53-backend-634e.onrender.com',
   headers: {
     'Content-Type': 'application/json'
   }
