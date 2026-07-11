@@ -21,3 +21,17 @@ body {
 .hide-default-applayout-toggle [class*="navigation-toggle"] {
   display: none !important;
 }
+
+/* Breadcrumb bar: matches TopNav color in dark mode, white in light mode */
+.breadcrumb-bar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #d1d5db;
+}
+
+/* Hero banner: ~25% viewport height */
+.hero-banner {
+  min-height: 25vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
