@@ -59,40 +59,61 @@ export function RecordInspector({
         <SpaceBetween size="m" direction="horizontal" alignItems="center">
           <Button onClick={onEdit}>Edit record</Button>
         </SpaceBetween>
+        <ColumnLayout columns={2} variant="text-grid">
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Record name</Box>
+            <Box>{record.name}</Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">Record name</Box>
-          <Box>{record.name}</Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Record type</Box>
+            <Box>{record.type}</Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">Record type</Box>
-          <Box>{record.type}</Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Value</Box>
+            <Box>
+              <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                {record.value}
+              </div>
+            </Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">Value</Box>
-          <Box>
-            <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-              {record.value}
-            </div>
-          </Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">TTL (seconds)</Box>
+            <Box>{record.ttl}</Box>
+          </SpaceBetween>
+          
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Routing policy</Box>
+            <Box>{record.routingPolicy}</Box>
+          </SpaceBetween>
+          
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Alias</Box>
+            <Box>{record.alias}</Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">Alias</Box>
-          <Box>{record.alias}</Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Record ID</Box>
+            <Box>{record.record_id}</Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">TTL (seconds)</Box>
-          <Box>{record.ttl}</Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Set identifier</Box>
+            <Box>{record.setIdentifier}</Box>
+          </SpaceBetween>
 
-        <SpaceBetween size="s">
-          <Box variant="awsui-key-label">Routing policy</Box>
-          <Box>{record.routingPolicy}</Box>
-        </SpaceBetween>
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Health check ID</Box>
+            <Box>{record.healthCheckId}</Box>
+          </SpaceBetween>
+
+          <SpaceBetween size="s">
+            <Box variant="awsui-key-label">Evaluate target health</Box>
+            <Box>{record.evaluateTargetHealth}</Box>
+          </SpaceBetween>
+        </ColumnLayout>
       </SpaceBetween>
     </Box>
   );

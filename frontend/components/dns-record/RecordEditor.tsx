@@ -23,7 +23,9 @@ interface RecordEditorProps {
   isAwsManaged: boolean;
   onCancel: () => void;
   onSubmit: (data: RecordFormData) => void;
+  onChange?: (data: RecordFormData) => void;
   hideActions?: boolean;
+  isCreating?: boolean;
 }
 
 const RECORD_TYPES = [
@@ -40,17 +42,24 @@ const RECORD_TYPES = [
   { label: 'SOA – Start of authority record', value: 'SOA' },
 ];
 
-export function RecordEditor({ record, rootDomain, isAwsManaged = false, onCancel, onSubmit, hideActions = false }: RecordEditorProps) {
+export function RecordEditor({ record, rootDomain, isAwsManaged = false, onCancel, onSubmit, onChange, hideActions = false, isCreating = false }: RecordEditorProps) {
   // Initialize state from existing record
   const [data, setData] = useState<RecordFormData>({
     name: record.name.replace(`.${rootDomain}`, '').replace(rootDomain, ''),
-    type: record.type,
-    ttl: record.ttl.replace(/,/g, ''), // clean up commas if any
-    routingPolicy: record.routingPolicy,
+    type: record.type || 'A',
+    ttl: record.ttl === '-' ? '300' : record.ttl.replace(/,/g, ''), // clean up commas if any
+    routingPolicy: record.routingPolicy || 'Simple',
     isAlias: record.alias === 'Yes',
-    value: record.value,
+    value: record.value || '',
     comment: record.comment || '',
   });
+
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const [errors, setErrors] = useState<{ value?: string | null, ttl?: string | null }>({});
 
@@ -104,17 +113,36 @@ export function RecordEditor({ record, rootDomain, isAwsManaged = false, onCance
           )}
 
           <FormField label="Record name">
-            <TextContent>
-              <p style={{ margin: 0 }}>{record.name}</p>
-            </TextContent>
+            {isCreating ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Input
+                  value={data.name}
+                  onChange={({ detail }) => handleChange('name', detail.value)}
+                  placeholder="e.g. www"
+                />
+                <span style={{ marginLeft: '8px', color: '#687078' }}>.{rootDomain}</span>
+              </div>
+            ) : (
+              <TextContent>
+                <p style={{ margin: 0 }}>{record.name}</p>
+              </TextContent>
+            )}
           </FormField>
 
           <FormField label="Record type">
-            <TextContent>
-              <p style={{ margin: 0 }}>
-                {RECORD_TYPES.find(t => t.value === data.type)?.label || data.type}
-              </p>
-            </TextContent>
+            {isCreating ? (
+              <Select
+                selectedOption={{ label: RECORD_TYPES.find(t => t.value === data.type)?.label || data.type, value: data.type }}
+                onChange={({ detail }) => handleChange('type', detail.selectedOption.value)}
+                options={RECORD_TYPES}
+              />
+            ) : (
+              <TextContent>
+                <p style={{ margin: 0 }}>
+                  {RECORD_TYPES.find(t => t.value === data.type)?.label || data.type}
+                </p>
+              </TextContent>
+            )}
           </FormField>
 
           <Toggle

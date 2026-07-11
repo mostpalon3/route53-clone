@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AppLayout, 
   BreadcrumbGroup, 
@@ -14,28 +14,103 @@ import {
 } from '@cloudscape-design/components';
 import { AppShell } from '@/components/layout/AppShell';
 import { useParams, useRouter } from 'next/navigation';
-import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
+import { DnsRecord } from '@/mock/records';
 import { RecordsTable } from '@/components/dns-record/RecordsTable';
 import { RecordEditor } from '@/components/dns-record/RecordEditor';
+import { useHostedZones } from '@/contexts/HostedZonesContext';
+import { dnsRecordService } from '@/services/dnsRecordService';
 
 export default function CreateRecordPage() {
   const params = useParams();
   const router = useRouter();
   const zoneId = params.id as string;
-  const zoneName = 'textinsightpro.netlify.app'; // Mock zone name for visual fidelity
+  
+  const { hostedZones } = useHostedZones();
+  const zone = hostedZones.find(z => z.id === zoneId);
+  const zoneName = zone ? zone.name : 'Unknown Zone';
 
-  const [records, setRecords] = useState<DnsRecord[]>(MOCK_RECORDS);
-  const [recordForms, setRecordForms] = useState([
+  const [records, setRecords] = useState<DnsRecord[]>([]);
+  const [isLoadingRecords, setIsLoadingRecords] = useState(true);
+
+  useEffect(() => {
+    if (zone && zone.pk) {
+      setIsLoadingRecords(true);
+      dnsRecordService.getRecords(zone.pk)
+        .then(data => {
+          setRecords(data.map(r => ({
+            id: String(r.id),
+            record_id: r.record_id,
+            name: r.record_name,
+            type: r.record_type,
+            routingPolicy: r.routing_policy,
+            setIdentifier: r.set_identifier || '-',
+            alias: r.alias ? 'Yes' : 'No',
+            value: r.value || '-',
+            ttl: r.ttl ? String(r.ttl) : '-',
+            healthCheckId: r.health_check_id || '-',
+            evaluateTargetHealth: r.evaluate_target_health ? 'Yes' : 'No',
+          })));
+        })
+        .catch(console.error)
+        .finally(() => setIsLoadingRecords(false));
+    }
+  }, [zone]);
+
+  const [recordForms, setRecordForms] = useState<Array<{ id: string, data: any }>>([
     { id: '1', data: {} }
   ]);
+
+  const handleAddRecord = () => {
+    setRecordForms(prev => [
+      ...prev,
+      { id: Date.now().toString(), data: {} }
+    ]);
+  };
+
+  const handleDeleteRecord = (idToRemove: string) => {
+    setRecordForms(prev => prev.filter(form => form.id !== idToRemove));
+  };
+
+  const handleRecordChange = (id: string, newData: any) => {
+    setRecordForms(prev => prev.map(form => form.id === id ? { ...form, data: newData } : form));
+  };
 
   const handleCancel = () => {
     router.push(`/hosted-zones/${zoneId}`);
   };
 
-  const handleCreateRecords = () => {
-    // Navigate back to details page and show success (mock implementation)
-    router.push(`/hosted-zones/${zoneId}?new=true`);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCreateRecords = async () => {
+    if (!zone || !zone.pk) return;
+    
+    setIsSubmitting(true);
+    try {
+      for (const form of recordForms) {
+        if (!form.data.type || !form.data.value) {
+          // Basic validation to skip completely empty forms
+          if (!form.data.isAlias) {
+            continue; 
+          }
+        }
+        
+        await dnsRecordService.createRecord(zone.pk, {
+           record_name: form.data.name ? `${form.data.name}.${zoneName}` : zoneName,
+           record_type: form.data.type,
+           routing_policy: form.data.routingPolicy || 'Simple',
+           alias: form.data.isAlias || false,
+           value: form.data.value || '',
+           ttl: form.data.ttl === '-' ? undefined : parseInt(form.data.ttl || '300'),
+           comment: form.data.comment
+        });
+      }
+      router.push(`/hosted-zones/${zoneId}?new=true`);
+    } catch (e) {
+      console.error('Failed to create records', e);
+      alert('Failed to create one or more records. Please check the console.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,7 +156,11 @@ export default function CreateRecordPage() {
                 defaultExpanded
                 headerText={`Record ${index + 1}`}
                 headerActions={
-                  <Button variant="normal" disabled={recordForms.length === 1}>
+                  <Button 
+                    variant="normal" 
+                    disabled={recordForms.length === 1}
+                    onClick={() => handleDeleteRecord(form.id)}
+                  >
                     Delete
                   </Button>
                 }
@@ -89,35 +168,41 @@ export default function CreateRecordPage() {
                 <div style={{ marginTop: '16px' }}>
                   <RecordEditor
                     record={{ 
-                      id: '', 
+                      id: '',
+                      record_id: '',
                       name: '', 
                       type: 'A', 
                       alias: 'No', 
                       value: '', 
                       ttl: '300', 
                       routingPolicy: 'Simple',
+                      setIdentifier: '',
+                      healthCheckId: '',
+                      evaluateTargetHealth: 'No',
                       comment: '' 
                     }}
                     rootDomain={zoneName}
                     isAwsManaged={false}
                     onSubmit={() => {}}
+                    onChange={(data) => handleRecordChange(form.id, data)}
                     onCancel={() => {}}
-                    hideActions={true} // Special prop we need to add to RecordEditor to hide standard Cancel/Save buttons
+                    hideActions={true}
+                    isCreating={true}
                   />
                 </div>
               </ExpandableSection>
             ))}
 
             <Box float="right">
-              <Button>Add another record</Button>
+              <Button onClick={handleAddRecord}>Add another record</Button>
             </Box>
           </SpaceBetween>
         </Container>
 
         <Box float="right">
           <SpaceBetween direction="horizontal" size="xs">
-            <Button variant="link" onClick={handleCancel}>Cancel</Button>
-            <Button variant="primary" onClick={handleCreateRecords} className="aws-danger-button">Create records</Button>
+            <Button variant="link" onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
+            <Button variant="primary" onClick={handleCreateRecords} loading={isSubmitting} className="aws-danger-button">Create records</Button>
           </SpaceBetween>
         </Box>
 
@@ -149,7 +234,7 @@ export default function CreateRecordPage() {
                 zoneName={zoneName} 
                 records={records} 
                 onSelectionChange={() => {}} 
-                hideActions={true} // Add prop to hide top actions in RecordsTable
+                hideActions={true} 
               />
             </Container>
           </div>

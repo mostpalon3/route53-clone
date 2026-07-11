@@ -44,9 +44,9 @@ const columnDefinitions = [
     sortingField: 'routingPolicy',
   },
   {
-    id: 'difference',
-    header: 'Difference',
-    cell: (item: DnsRecord) => item.difference,
+    id: 'setIdentifier',
+    header: 'Set identifier',
+    cell: (item: DnsRecord) => item.setIdentifier,
   },
   {
     id: 'alias',
@@ -66,6 +66,21 @@ const columnDefinitions = [
     id: 'ttl',
     header: 'TTL (seconds)',
     cell: (item: DnsRecord) => item.ttl,
+  },
+  {
+    id: 'healthCheckId',
+    header: 'Health check ID',
+    cell: (item: DnsRecord) => item.healthCheckId,
+  },
+  {
+    id: 'evaluateTargetHealth',
+    header: 'Evaluate target health',
+    cell: (item: DnsRecord) => item.evaluateTargetHealth,
+  },
+  {
+    id: 'recordId',
+    header: 'Record ID',
+    cell: (item: DnsRecord) => item.record_id,
   },
 ];
 

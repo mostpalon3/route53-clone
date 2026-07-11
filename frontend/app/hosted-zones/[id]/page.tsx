@@ -10,9 +10,10 @@ import { RecordInspector } from '@/components/dns-record/RecordInspector';
 import { RecordsTable } from '@/components/dns-record/RecordsTable';
 import { DeleteRecordModal } from '@/components/dns-record/DeleteRecordModal';
 import { DeleteHostedZoneModal } from '@/components/hosted-zone/DeleteHostedZoneModal';
-import { DnsRecord, MOCK_RECORDS } from '@/mock/records';
+import { DnsRecord } from '@/mock/records';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useHostedZones } from '@/contexts/HostedZonesContext';
+import { dnsRecordService } from '@/services/dnsRecordService';
 
 export default function HostedZoneDetailsPage() {
   const params = useParams();
@@ -26,13 +27,38 @@ export default function HostedZoneDetailsPage() {
   const zone = hostedZones.find(z => z.id === zoneId);
   const zoneName = zone ? zone.name : 'Unknown Zone';
 
-  const [records, setRecords] = useState<DnsRecord[]>(MOCK_RECORDS);
+  const [records, setRecords] = useState<DnsRecord[]>([]);
+  const [isLoadingRecords, setIsLoadingRecords] = useState(true);
   const [selectedItems, setSelectedItems] = useState<DnsRecord[]>([]);
   const [splitPanelOpen, setSplitPanelOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(isNew);
   const [showZoneUpdatedSuccess, setShowZoneUpdatedSuccess] = useState(isUpdated);
   const [splitPanelPreferences, setSplitPanelPreferences] = useState({ position: 'side' });
   const [showCreatedSuccess, setShowCreatedSuccess] = useState(false);
+  
+  React.useEffect(() => {
+    if (zone && zone.pk) {
+      setIsLoadingRecords(true);
+      dnsRecordService.getRecords(zone.pk)
+        .then(data => {
+          setRecords(data.map(r => ({
+            id: String(r.id), // Used for table selection (Cloudscape requirement)
+            record_id: r.record_id,
+            name: r.record_name,
+            type: r.record_type,
+            routingPolicy: r.routing_policy,
+            setIdentifier: r.set_identifier || '-',
+            alias: r.alias ? 'Yes' : 'No',
+            value: r.value || '-',
+            ttl: r.ttl ? String(r.ttl) : '-',
+            healthCheckId: r.health_check_id || '-',
+            evaluateTargetHealth: r.evaluate_target_health ? 'Yes' : 'No',
+          })));
+        })
+        .catch(console.error)
+        .finally(() => setIsLoadingRecords(false));
+    }
+  }, [zone]);
   
   // Edit state
   const [isEditingRecord, setIsEditingRecord] = useState(false);

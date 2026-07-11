@@ -19,12 +19,15 @@ def create_dns_record(db: Session, zone_id_pk: int, record_in: DNSRecordCreate):
     
     new_record = DNSRecord(
         hosted_zone_id=zone.zone_id,
-        name=record_in.name,
-        type=record_in.type,
+        record_name=record_in.record_name,
+        record_type=record_in.record_type,
         ttl=record_in.ttl,
         value=record_in.value,
         routing_policy=record_in.routing_policy,
-        alias=record_in.alias
+        set_identifier=record_in.set_identifier,
+        alias=record_in.alias,
+        health_check_id=record_in.health_check_id,
+        evaluate_target_health=record_in.evaluate_target_health
     )
     db.add(new_record)
     zone.record_count += 1
@@ -40,22 +43,25 @@ def get_dns_record(db: Session, record_id: int):
 
 def update_dns_record(db: Session, record_id: int, record_update: DNSRecordUpdate):
     record = get_dns_record(db, record_id)
-    
-    # Prevent modifying default SOA/NS types if we wanted to be strict,
-    # but the requirement is to prevent *deleting* them. We'll allow updates.
 
-    if record_update.name is not None:
-        record.name = record_update.name
-    if record_update.type is not None:
-        record.type = record_update.type
+    if record_update.record_name is not None:
+        record.record_name = record_update.record_name
+    if record_update.record_type is not None:
+        record.record_type = record_update.record_type
     if record_update.ttl is not None:
         record.ttl = record_update.ttl
     if record_update.value is not None:
         record.value = record_update.value
     if record_update.routing_policy is not None:
         record.routing_policy = record_update.routing_policy
+    if record_update.set_identifier is not None:
+        record.set_identifier = record_update.set_identifier
     if record_update.alias is not None:
         record.alias = record_update.alias
+    if record_update.health_check_id is not None:
+        record.health_check_id = record_update.health_check_id
+    if record_update.evaluate_target_health is not None:
+        record.evaluate_target_health = record_update.evaluate_target_health
 
     db.commit()
     db.refresh(record)
@@ -65,11 +71,10 @@ def delete_dns_record(db: Session, record_id: int):
     record = get_dns_record(db, record_id)
 
     # Prevent deleting default SOA and NS
-    if record.type in ["SOA", "NS"]:
-        # Check if it's the root default ones (name == zone domain)
+    if record.record_type in ["SOA", "NS"]:
         zone = db.query(HostedZone).filter(HostedZone.zone_id == record.hosted_zone_id).first()
-        if zone and record.name == zone.domain_name:
-            raise HTTPException(status_code=400, detail=f"Cannot delete default {record.type} record")
+        if zone and record.record_name == zone.domain_name:
+            raise HTTPException(status_code=400, detail=f"Cannot delete default {record.record_type} record")
 
     zone = db.query(HostedZone).filter(HostedZone.zone_id == record.hosted_zone_id).first()
     if zone and zone.record_count > 0:
