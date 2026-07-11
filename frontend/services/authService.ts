@@ -21,6 +21,23 @@ export const authService = {
     }
   },
 
+  signup: async (username: string, email: string, password: string): Promise<User> => {
+    try {
+      const response = await api.post('/api/auth/signup', { username, email, password });
+      const { access_token, user } = response.data.data;
+      saveToken(access_token);
+      return user;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as any;
+        if (err.response && err.response.data && err.response.data.detail) {
+          throw new Error(err.response.data.detail);
+        }
+      }
+      throw new Error('Signup failed');
+    }
+  },
+
   logout: async (): Promise<void> => {
     removeToken();
   },

@@ -19,3 +19,9 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserSignup(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+

@@ -3,10 +3,39 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db, get_current_user
 from app.core.security import verify_password, create_access_token
 from app.models.user import User
-from app.schemas.auth import Token, UserResponse, UserLogin
+from app.schemas.auth import Token, UserResponse, UserLogin, UserSignup
 from app.schemas.hosted_zone import APIResponse
+from app.core.security import get_password_hash
 
 router = APIRouter()
+
+@router.post("/signup", response_model=APIResponse)
+def signup(user_in: UserSignup, db: Session = Depends(get_db)):
+    # Check if user exists
+    existing_user = db.query(User).filter((User.email == user_in.email) | (User.username == user_in.username)).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email or username already registered"
+        )
+    
+    hashed_password = get_password_hash(user_in.password)
+    new_user = User(
+        username=user_in.username,
+        email=user_in.email,
+        hashed_password=hashed_password
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    access_token = create_access_token(subject=new_user.email)
+    
+    return APIResponse(
+        success=True,
+        message="Signup successful",
+        data={"access_token": access_token, "token_type": "bearer", "user": UserResponse.model_validate(new_user).model_dump()}
+    )
 
 @router.post("/login", response_model=APIResponse)
 def login_for_access_token(user_in: UserLogin, db: Session = Depends(get_db)):

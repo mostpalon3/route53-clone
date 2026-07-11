@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { hostedZoneService, HostedZoneResponse, HostedZoneCreate } from '@/services/hostedZoneService';
 import { authService } from '@/services/authService';
 import { loadToken } from '@/lib/auth';
+import { useAuth } from '@/hooks/useAuth';
 
 // Keep the UI interface loosely similar so we don't break existing components too badly yet, 
 // or map it properly. The backend returns id (number), zone_id, domain_name, etc.
@@ -32,14 +33,19 @@ interface HostedZonesContextType {
 const HostedZonesContext = createContext<HostedZonesContextType | undefined>(undefined);
 
 export function HostedZonesProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
   const [hostedZones, setHostedZones] = useState<HostedZone[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchZones = async () => {
+    if (!isAuthenticated) {
+      setHostedZones([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
-
-
       const data = await hostedZoneService.getHostedZones();
       const mapped: HostedZone[] = data.map(z => ({
         id: z.zone_id,
@@ -60,7 +66,7 @@ export function HostedZonesProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchZones();
-  }, []);
+  }, [isAuthenticated]);
 
   const addHostedZone = async (zoneData: HostedZoneCreate) => {
     await hostedZoneService.createHostedZone(zoneData);

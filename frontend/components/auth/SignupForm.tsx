@@ -13,9 +13,10 @@ import Link from 'next/link';
 import { useAuth } from '../../hooks/useAuth';
 import { useRouter } from 'next/navigation';
 
-export function LoginForm() {
-  const { login } = useAuth();
+export function SignupForm() {
+  const { signup } = useAuth();
   const router = useRouter();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,18 +24,18 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in both email and password.');
+    if (!username || !email || !password) {
+      setError('Please fill in all fields.');
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      await login(email, password);
+      await signup(username, email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -45,34 +46,34 @@ export function LoginForm() {
       <Form
         actions={
           <SpaceBetween direction="horizontal" size="xs" alignItems="center">
-            <Link href="/signup" style={{ color: '#0972d3', textDecoration: 'none', marginRight: '16px' }}>
-              Don't have an account? Sign up
+            <Link href="/login" style={{ color: '#0972d3', textDecoration: 'none', marginRight: '16px' }}>
+              Already have an account? Sign in
             </Link>
-            <Button
-              formAction="none"
-              onClick={() => {
-                setEmail('admin@example.com');
-                setPassword('password123');
-              }}
-            >
-              Autofill
-            </Button>
             <Button variant="primary" loading={loading} formAction="submit">
-              Sign in
+              Sign up
             </Button>
           </SpaceBetween>
         }
         errorText={error}
       >
-        <Container header={<Header variant="h2">Sign in to Route 53 Clone</Header>}>
+        <Container header={<Header variant="h2">Create a new account</Header>}>
           <SpaceBetween direction="vertical" size="l">
             {error && <Alert type="error" header="Error">{error}</Alert>}
+            <FormField label="Username">
+              <Input
+                value={username}
+                onChange={event => setUsername(event.detail.value)}
+                type="text"
+                placeholder="johndoe"
+                disabled={loading}
+              />
+            </FormField>
             <FormField label="Email">
               <Input
                 value={email}
                 onChange={event => setEmail(event.detail.value)}
                 type="email"
-                placeholder="admin@example.com"
+                placeholder="john@example.com"
                 disabled={loading}
               />
             </FormField>
