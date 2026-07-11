@@ -31,7 +31,7 @@ export default function HostedZonesPage() {
 
   const handleDeleteConfirm = () => {
     if (zoneToDelete) {
-      deleteHostedZone(zoneToDelete.id);
+      deleteHostedZone(zoneToDelete.pk);
       setDeletedZoneName(zoneToDelete.name);
       setShowDeletedSuccess(true);
       setDeleteModalVisible(false);

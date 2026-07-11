@@ -5,8 +5,9 @@ import { api } from '../lib/api';
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
     try {
-      const response = await api.post('/login', { email, password });
-      const { access_token, user } = response.data;
+      const response = await api.post('/api/auth/login', { email, password });
+      // response.data is the APIResponse standard envelope
+      const { access_token, user } = response.data.data;
       saveToken(access_token);
       return user;
     } catch (error: unknown) {
@@ -28,8 +29,8 @@ export const authService = {
     const token = loadToken();
     if (!token) return null;
     try {
-      const response = await api.get('/me');
-      return response.data;
+      const response = await api.get('/api/auth/me');
+      return response.data.data;
     } catch (error) {
       console.error('Failed to get current user', error);
       removeToken();

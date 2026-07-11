@@ -10,9 +10,11 @@ import FormField from '@cloudscape-design/components/form-field';
 import Input from '@cloudscape-design/components/input';
 import Alert from '@cloudscape-design/components/alert';
 import { useAuth } from '../../hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
   const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ export function LoginForm() {
     setError(null);
     try {
       await login(email, password);
-      // Typically we would redirect here or let a layout handle the redirection
+      router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

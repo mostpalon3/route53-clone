@@ -1,34 +1,79 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { HostedZone, MOCK_HOSTED_ZONES } from '@/mock/hostedZones';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { hostedZoneService, HostedZoneResponse, HostedZoneCreate } from '@/services/hostedZoneService';
+import { authService } from '@/services/authService';
+import { loadToken } from '@/lib/auth';
+
+// Keep the UI interface loosely similar so we don't break existing components too badly yet, 
+// or map it properly. The backend returns id (number), zone_id, domain_name, etc.
+// Let's adapt HostedZoneResponse to fit what the table expects, or just use HostedZoneResponse.
+// The existing table expects: id, name, type, recordCount, comment
+
+export interface HostedZone {
+  id: string; // The backend zone_id e.g. Z123456
+  pk: number; // The backend primary key
+  name: string;
+  type: string;
+  recordCount: number;
+  comment: string;
+}
 
 interface HostedZonesContextType {
   hostedZones: HostedZone[];
-  addHostedZone: (zone: HostedZone) => void;
-  updateHostedZone: (id: string, updatedZone: HostedZone) => void;
-  deleteHostedZone: (id: string) => void;
+  addHostedZone: (zoneData: HostedZoneCreate) => Promise<void>;
+  deleteHostedZone: (pk: number) => Promise<void>;
+  isLoading: boolean;
 }
 
 const HostedZonesContext = createContext<HostedZonesContextType | undefined>(undefined);
 
 export function HostedZonesProvider({ children }: { children: ReactNode }) {
-  const [hostedZones, setHostedZones] = useState<HostedZone[]>(MOCK_HOSTED_ZONES);
+  const [hostedZones, setHostedZones] = useState<HostedZone[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const addHostedZone = (zone: HostedZone) => {
-    setHostedZones(prev => [...prev, zone]);
+  const fetchZones = async () => {
+    setIsLoading(true);
+    try {
+      // Auto-login for development/testing if no token exists
+      if (!loadToken()) {
+        console.log('No token found, auto-logging in as default admin...');
+        await authService.login('admin@example.com', 'password123');
+      }
+
+      const data = await hostedZoneService.getHostedZones();
+      const mapped: HostedZone[] = data.map(z => ({
+        id: z.zone_id,
+        pk: z.id,
+        name: z.domain_name,
+        type: z.zone_type,
+        recordCount: z.record_count,
+        comment: z.description || ''
+      }));
+      setHostedZones(mapped);
+    } catch (e) {
+      console.error("Failed to load hosted zones", e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const updateHostedZone = (id: string, updatedZone: HostedZone) => {
-    setHostedZones(prev => prev.map(zone => (zone.id === id ? updatedZone : zone)));
+  useEffect(() => {
+    fetchZones();
+  }, []);
+
+  const addHostedZone = async (zoneData: HostedZoneCreate) => {
+    await hostedZoneService.createHostedZone(zoneData);
+    await fetchZones(); // Refresh the list
   };
 
-  const deleteHostedZone = (id: string) => {
-    setHostedZones(prev => prev.filter(zone => zone.id !== id));
+  const deleteHostedZone = async (pk: number) => {
+    await hostedZoneService.deleteHostedZone(pk);
+    await fetchZones(); // Refresh the list
   };
 
   return (
-    <HostedZonesContext.Provider value={{ hostedZones, addHostedZone, updateHostedZone, deleteHostedZone }}>
+    <HostedZonesContext.Provider value={{ hostedZones, addHostedZone, deleteHostedZone, isLoading }}>
       {children}
     </HostedZonesContext.Provider>
   );
