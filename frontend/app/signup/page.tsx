@@ -10,12 +10,8 @@ export default function SignupPage() {
     <AppShell 
       breadcrumbs={<BreadcrumbGroup items={[{ text: 'Route 53', href: '/' }, { text: 'Sign up', href: '#' }]} />}
     >
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        paddingTop: '60px'
-      }}>
-        <div style={{ width: '100%', maxWidth: '500px' }}>
+      <div className="flex justify-center pt-[60px]">
+        <div className="w-full max-w-[500px] px-4">
           <SignupForm />
         </div>
       </div>

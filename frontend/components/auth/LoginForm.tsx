@@ -44,28 +44,33 @@ export function LoginForm() {
     <form onSubmit={handleSubmit}>
       <Form
         actions={
-          <SpaceBetween direction="horizontal" size="xs" alignItems="center">
-            <Link href="/signup" style={{ color: '#0972d3', textDecoration: 'none', marginRight: '16px' }}>
-              Don't have an account? Sign up
-            </Link>
-            <Button
-              formAction="none"
-              onClick={() => {
-                setEmail('admin@example.com');
-                setPassword('password123');
-              }}
-            >
-              Autofill
-            </Button>
-            <Button variant="primary" loading={loading} formAction="submit">
-              Sign in
-            </Button>
-          </SpaceBetween>
+          <div className="flex flex-col sm:flex-row gap-4 items-center sm:justify-end">
+            <div className="sm:mr-4">
+              <Link href="/signup" style={{ color: '#0972d3', textDecoration: 'none' }}>
+                Don't have an account? Sign up
+              </Link>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
+              <Button
+                formAction="none"
+                onClick={() => {
+                  setEmail('admin@example.com');
+                  setPassword('password123');
+                }}
+              >
+                Autofill
+              </Button>
+              <Button variant="primary" loading={loading} formAction="submit">
+                Sign in
+              </Button>
+            </div>
+          </div>
         }
         errorText={error}
       >
         <Container header={<Header variant="h2">Sign in to Route 53 Clone</Header>}>
           <SpaceBetween direction="vertical" size="l">
+            <Alert type="info">Note: Due to cold start of render it will take little bit time at start</Alert>
             {error && <Alert type="error" header="Error">{error}</Alert>}
             <FormField label="Email">
               <Input

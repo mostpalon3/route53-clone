@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#0f1b2a' }}>
-      <div style={{ width: '100%', maxWidth: '500px' }}>
+      <div className="w-full max-w-[500px] px-4">
         <LoginForm />
       </div>
     </div>

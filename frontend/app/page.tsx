@@ -22,21 +22,21 @@ export default function HomePage() {
           zIndex: 0
         }} />
 
-        <div style={{ position: 'relative', zIndex: 1, padding: '40px 32px 32px' }}>
-          <div style={{ display: 'flex', gap: '1.5%', alignItems: 'flex-start' }}>
+        <div className="relative z-10 p-4 md:p-[40px_32px_32px]">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-[1.5%] items-start">
 
             {/* ── LEFT COLUMN ── */}
-            <div style={{ flex: '1 1 0', minWidth: 0 }}>
+            <div className="flex-1 min-w-0 w-full">
 
               {/* Header Text */}
-              <div style={{ marginBottom: '15vh', marginLeft: '5%' }}>
+              <div className="mb-10 md:mb-[15vh] ml-0 md:ml-[5%]">
                 <div style={{ color: '#9ba7b6', fontSize: '14px', marginBottom: '8px' }}>
                   Network &amp; Content Delivery
                 </div>
-                <h1 style={{ fontSize: '44px', margin: '0 0 12px', fontWeight: 700, color: '#fff' }}>
+                <h1 className="text-3xl md:text-[44px] font-bold text-white mb-3">
                   Amazon Route 53
                 </h1>
-                <p style={{ fontSize: '28px', margin: '0 0 12px', fontWeight: 300, color: '#fff' }}>
+                <p className="text-xl md:text-[28px] font-light text-white mb-3">
                   A reliable way to route users to internet applications
                 </p>
                 <p style={{ fontSize: '16px', margin: '0', color: '#d1d5db', maxWidth: '600px' }}>
@@ -45,7 +45,7 @@ export default function HomePage() {
               </div>
 
               {/* Main Left Content (How it works, Products, etc.) */}
-              <div style={{ width: '95%', marginLeft: '5%' }}>
+              <div className="w-full md:w-[95%] ml-0 md:ml-[5%]">
                 <SpaceBetween size="xl">
                   <div>
                     <Box variant="h2" padding={{ bottom: 's' }}>How it works</Box>
@@ -169,7 +169,7 @@ export default function HomePage() {
             </div>
 
             {/* ── RIGHT COLUMN ── */}
-            <div style={{ flex: '0 0 400px', minWidth: '340px', marginTop: '1%', marginRight: '4%' }}>
+            <div className="w-full md:flex-none md:w-[400px] md:min-w-[340px] mt-8 md:mt-[1%] mr-0 md:mr-[4%]">
               <SpaceBetween size="s">
                 <Container header={<Header variant="h2"><span style={{ fontSize: '20px' }}>Get started with Route 53</span></Header>}>
                   <SpaceBetween size="m">

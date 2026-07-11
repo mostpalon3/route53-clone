@@ -45,14 +45,18 @@ export function SignupForm() {
     <form onSubmit={handleSubmit}>
       <Form
         actions={
-          <SpaceBetween direction="horizontal" size="xs" alignItems="center">
-            <Link href="/login" style={{ color: '#0972d3', textDecoration: 'none', marginRight: '16px' }}>
-              Already have an account? Sign in
-            </Link>
-            <Button variant="primary" loading={loading} formAction="submit">
-              Sign up
-            </Button>
-          </SpaceBetween>
+          <div className="flex flex-col sm:flex-row gap-4 items-center sm:justify-end">
+            <div className="sm:mr-4">
+              <Link href="/login" style={{ color: '#0972d3', textDecoration: 'none' }}>
+                Already have an account? Sign in
+              </Link>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
+              <Button variant="primary" loading={loading} formAction="submit">
+                Sign up
+              </Button>
+            </div>
+          </div>
         }
         errorText={error}
       >
