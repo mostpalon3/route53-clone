@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <Box padding={{ vertical: 'l', horizontal: 'xxl' }} variant="div">
       <div style={{ borderTop: '1px solid #eaeded', margin: '20px 0' }} />
-      <SpaceBetween direction="horizontal" size="l" justifyContent="space-between">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <SpaceBetween direction="horizontal" size="l">
           <Link href="#" variant="secondary">CloudShell</Link>
           <Link href="#" variant="secondary">Feedback</Link>
@@ -20,7 +20,7 @@ export function Footer() {
           <Link href="#" variant="secondary">Cookie preferences</Link>
           <Link href="#" variant="secondary">Support</Link>
         </SpaceBetween>
-      </SpaceBetween>
+      </div>
     </Box>
   );
 }
