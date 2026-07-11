@@ -18,17 +18,17 @@ export function Notifications() {
           {
             id: 'resource',
             header: 'Resource',
-            cell: item => item.resource,
+            cell: (item: any) => item.resource,
           },
           {
             id: 'status',
             header: 'Status',
-            cell: item => item.status,
+            cell: (item: any) => item.status,
           },
           {
             id: 'lastUpdate',
             header: 'Last update',
-            cell: item => item.lastUpdate,
+            cell: (item: any) => item.lastUpdate,
           },
         ]}
         items={[]}

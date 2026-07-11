@@ -15,12 +15,15 @@ export const createDnsRecord = (data: RecordFormData, rootDomain: string): DnsRe
   
   return {
     id: `rec-${Math.random().toString(36).substring(2, 9)}`,
+    record_id: `rec-${Math.random().toString(36).substring(2, 9)}`,
     name: fullDomainName,
     type: data.type,
     routingPolicy: data.routingPolicy,
-    difference: '-',
+    setIdentifier: '-',
     alias: data.isAlias ? 'Yes' : 'No',
     value: data.value,
     ttl: data.ttl,
+    healthCheckId: '-',
+    evaluateTargetHealth: 'No'
   };
 };

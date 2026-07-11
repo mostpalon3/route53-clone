@@ -18,6 +18,7 @@ export interface HostedZone {
   recordCount: number;
   description: string;
   createdBy: string;
+  tags?: any[];
 }
 
 interface HostedZonesContextType {

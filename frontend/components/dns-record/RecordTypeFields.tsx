@@ -26,7 +26,6 @@ export function RecordTypeFields({ data, onChange, errorText }: RecordTypeFields
             { label: 'd2q2e128u923.cloudfront.net', value: 'd2q2e128u923.cloudfront.net' },
           ]}
           placeholder="Choose endpoint"
-          enteredTextLabel={(value) => `Use: "${value}"`}
         />
       </FormField>
     );
