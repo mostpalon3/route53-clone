@@ -1,7 +1,14 @@
+"use client";
+
 import React from 'react';
 import { Container, Box, Button, SpaceBetween, Grid } from '@cloudscape-design/components';
+import { useHostedZones } from '@/contexts/HostedZonesContext';
+import Link from 'next/link';
 
 export function DashboardFeatures() {
+  const { hostedZones } = useHostedZones();
+  const zoneCount = hostedZones.length;
+
   return (
     <Container>
       <Grid
@@ -18,7 +25,18 @@ export function DashboardFeatures() {
             <Box variant="p" color="text-body-secondary" textAlign="center">
               A hosted zone tells Route 53 how to respond to DNS queries for a domain such as example.com.
             </Box>
-            <Button href="/hosted-zones">Create hosted zone</Button>
+            {zoneCount > 0 ? (
+              <Box textAlign="center">
+                <Link href="/hosted-zones" style={{ textDecoration: 'none' }}>
+                  <Box color="text-status-info" fontSize="display-l" fontWeight="bold">
+                    {zoneCount}
+                  </Box>
+                </Link>
+                <Box color="text-body-secondary">Hosted zones</Box>
+              </Box>
+            ) : (
+              <Button href="/hosted-zones">Create hosted zone</Button>
+            )}
           </SpaceBetween>
         </Box>
 
