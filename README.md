@@ -33,7 +33,7 @@ This is a full-stack clone of AWS Route 53, featuring a responsive UI mimicking 
 ### Backend Setup
 1. Navigate to the backend directory:
    ```bash
-   cd backend/backend
+   cd backend
    ```
 2. Create a virtual environment:
    ```bash
