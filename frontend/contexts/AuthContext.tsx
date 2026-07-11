@@ -60,7 +60,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signup,
       logout
     }}>
-      {children}
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0f1b2a' }}>
+          <div style={{ color: 'white', fontFamily: 'sans-serif' }}>Loading...</div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

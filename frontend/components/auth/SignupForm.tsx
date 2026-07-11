@@ -33,7 +33,7 @@ export function SignupForm() {
     setError(null);
     try {
       await signup(username, email, password);
-      router.push('/dashboard');
+      router.push('/');
     } catch (err: any) {
       setError(err.message || 'Signup failed');
     } finally {

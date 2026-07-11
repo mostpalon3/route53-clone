@@ -32,7 +32,7 @@ export function LoginForm() {
     setError(null);
     try {
       await login(email, password);
-      router.push('/dashboard');
+      router.push('/');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
