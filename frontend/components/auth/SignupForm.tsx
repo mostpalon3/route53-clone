@@ -64,7 +64,7 @@ export function SignupForm() {
                 value={username}
                 onChange={event => setUsername(event.detail.value)}
                 type="text"
-                placeholder="johndoe"
+                placeholder="Username"
                 disabled={loading}
               />
             </FormField>
@@ -73,7 +73,7 @@ export function SignupForm() {
                 value={email}
                 onChange={event => setEmail(event.detail.value)}
                 type="email"
-                placeholder="john@example.com"
+                placeholder="Email"
                 disabled={loading}
               />
             </FormField>
@@ -82,7 +82,7 @@ export function SignupForm() {
                 value={password}
                 onChange={event => setPassword(event.detail.value)}
                 type="password"
-                placeholder="********"
+                placeholder="Password"
                 disabled={loading}
               />
             </FormField>

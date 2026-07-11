@@ -72,7 +72,7 @@ export function LoginForm() {
                 value={email}
                 onChange={event => setEmail(event.detail.value)}
                 type="email"
-                placeholder="admin@example.com"
+                placeholder="Email"
                 disabled={loading}
               />
             </FormField>
@@ -81,7 +81,7 @@ export function LoginForm() {
                 value={password}
                 onChange={event => setPassword(event.detail.value)}
                 type="password"
-                placeholder="********"
+                placeholder="Password"
                 disabled={loading}
               />
             </FormField>

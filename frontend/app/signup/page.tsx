@@ -15,7 +15,7 @@ export default function SignupPage() {
         justifyContent: 'center',
         paddingTop: '60px'
       }}>
-        <div style={{ width: '100%', maxWidth: '400px' }}>
+        <div style={{ width: '100%', maxWidth: '500px' }}>
           <SignupForm />
         </div>
       </div>
