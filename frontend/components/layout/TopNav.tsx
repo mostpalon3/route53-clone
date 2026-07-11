@@ -144,8 +144,8 @@ export function TopNav() {
           },
           {
             type: "menu-dropdown",
-            text: user ? `${user.name} (926028309602)` : "mostpalon3 (926028309602)",
-            description: user ? user.username : "mostpalon3",
+            text: user ? `${user.username} (926028309602)` : "mostpalon3 (926028309602)",
+            description: user ? user.email : "admin@example.com",
             items: [
               { id: "profile", text: "Profile" },
               { id: "logout", text: "Sign out" }

@@ -16,12 +16,14 @@ export interface HostedZone {
   name: string;
   type: string;
   recordCount: number;
-  comment: string;
+  description: string;
+  createdBy: string;
 }
 
 interface HostedZonesContextType {
   hostedZones: HostedZone[];
   addHostedZone: (zoneData: HostedZoneCreate) => Promise<void>;
+  updateHostedZone: (pk: number, description: string) => Promise<void>;
   deleteHostedZone: (pk: number) => Promise<void>;
   isLoading: boolean;
 }
@@ -48,7 +50,8 @@ export function HostedZonesProvider({ children }: { children: ReactNode }) {
         name: z.domain_name,
         type: z.zone_type,
         recordCount: z.record_count,
-        comment: z.description || ''
+        description: z.description || '',
+        createdBy: 'arn:aws:iam::123456789012:user/admin'
       }));
       setHostedZones(mapped);
     } catch (e) {
@@ -67,13 +70,18 @@ export function HostedZonesProvider({ children }: { children: ReactNode }) {
     await fetchZones(); // Refresh the list
   };
 
+  const updateHostedZone = async (pk: number, description: string) => {
+    await hostedZoneService.updateHostedZone(pk, { description });
+    await fetchZones(); // Refresh the list
+  };
+
   const deleteHostedZone = async (pk: number) => {
     await hostedZoneService.deleteHostedZone(pk);
     await fetchZones(); // Refresh the list
   };
 
   return (
-    <HostedZonesContext.Provider value={{ hostedZones, addHostedZone, deleteHostedZone, isLoading }}>
+    <HostedZonesContext.Provider value={{ hostedZones, addHostedZone, updateHostedZone, deleteHostedZone, isLoading }}>
       {children}
     </HostedZonesContext.Provider>
   );

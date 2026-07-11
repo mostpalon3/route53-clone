@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Box, SpaceBetween, Button, FormField, Input, Alert } from '@cloudscape-design/components';
-import { HostedZone } from '@/mock/hostedZones';
+import { HostedZone } from '@/contexts/HostedZonesContext';
 import { useRouter } from 'next/navigation';
 
 interface DeleteHostedZoneModalProps {

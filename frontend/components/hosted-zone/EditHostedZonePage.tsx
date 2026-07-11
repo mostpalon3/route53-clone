@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Form, SpaceBetween, Container, Header, FormField, Textarea, Button, Box } from '@cloudscape-design/components';
-import { HostedZone } from '@/mock/hostedZones';
+import { HostedZone } from '@/contexts/HostedZonesContext';
 import { HostedZoneTagEditor, Tag } from './HostedZoneTagEditor';
 import { useRouter } from 'next/navigation';
 import { useHostedZones } from '@/contexts/HostedZonesContext';
@@ -20,13 +20,14 @@ export function EditHostedZonePage({ zoneId }: { zoneId: string }) {
     return <Box margin="xxl" textAlign="center">Zone not found</Box>;
   }
 
-  const handleSave = () => {
-    updateHostedZone(zoneId, {
-      ...zone,
-      description,
-      tags
-    });
-    router.push(`/hosted-zones/${zoneId}?updated=true`);
+  const handleSave = async () => {
+    try {
+      await updateHostedZone(zone.pk, description);
+      router.push(`/hosted-zones/${zoneId}?updated=true`);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to update hosted zone');
+    }
   };
 
   const handleCancel = () => {

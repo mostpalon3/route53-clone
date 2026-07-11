@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { HostedZoneTable } from '@/components/hosted-zone/HostedZoneTable';
 import { HostedZoneInspector } from '@/components/hosted-zone/HostedZoneInspector';
-import { HostedZone } from '@/mock/hostedZones';
+import { HostedZone } from '@/contexts/HostedZonesContext';
 import { useHostedZones } from '@/contexts/HostedZonesContext';
 import { DeleteHostedZoneModal } from '@/components/hosted-zone/DeleteHostedZoneModal';
 

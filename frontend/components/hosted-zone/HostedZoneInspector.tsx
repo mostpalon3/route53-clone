@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Box, SpaceBetween } from '@cloudscape-design/components';
-import { HostedZone } from '@/mock/hostedZones';
+import { HostedZone } from '@/contexts/HostedZonesContext';
 
 interface HostedZoneInspectorProps {
   selectedItems: HostedZone[];

@@ -66,7 +66,7 @@ export function HostedZoneTagEditor({ tags, onChange }: HostedZoneTagEditorProps
             </FormField>
 
             <div style={{ marginTop: index === 0 ? '24px' : '0' }}>
-              <Button onClick={() => handleRemoveTag(index)}>
+              <Button formAction="none" onClick={() => handleRemoveTag(index)}>
                 Remove tag
               </Button>
             </div>
@@ -74,7 +74,7 @@ export function HostedZoneTagEditor({ tags, onChange }: HostedZoneTagEditorProps
         ))}
 
         <div>
-          <Button onClick={handleAddTag} disabled={tags.length >= 50}>
+          <Button formAction="none" onClick={handleAddTag} disabled={tags.length >= 50}>
             Add tag
           </Button>
           <Box variant="small" color="text-body-secondary" margin={{ top: 'xs' }}>

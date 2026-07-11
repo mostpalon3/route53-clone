@@ -90,29 +90,58 @@ export default function HostedZoneDetailsPage() {
     }
   }, []);
 
-  const handleUpdateRecord = (updatedRecord: DnsRecord) => {
-    setRecords(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
-    setSelectedItems([updatedRecord]); // keep it selected with new values
-    setIsEditingRecord(false);
-    setShowUpdatedSuccess(true);
+  const handleUpdateRecord = async (updatedRecord: DnsRecord) => {
+    if (!zone || !zone.pk) return;
+    try {
+      await dnsRecordService.updateRecord(zone.pk, parseInt(updatedRecord.id), {
+        record_name: updatedRecord.name,
+        record_type: updatedRecord.type,
+        routing_policy: updatedRecord.routingPolicy,
+        alias: updatedRecord.alias === 'Yes',
+        value: updatedRecord.value,
+        ttl: updatedRecord.ttl === '-' ? undefined : parseInt(updatedRecord.ttl.replace(/,/g, '')),
+        set_identifier: updatedRecord.setIdentifier === '-' ? undefined : updatedRecord.setIdentifier,
+        health_check_id: updatedRecord.healthCheckId === '-' ? undefined : updatedRecord.healthCheckId,
+        evaluate_target_health: updatedRecord.evaluateTargetHealth === 'Yes',
+      });
+      setRecords(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
+      setSelectedItems([updatedRecord]); // keep it selected with new values
+      setIsEditingRecord(false);
+      setShowUpdatedSuccess(true);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to update record');
+    }
   };
 
-  const handleDeleteRecords = () => {
-    const idsToDelete = new Set(recordsToDelete.map(r => r.id));
-    setRecords(prev => prev.filter(r => !idsToDelete.has(r.id)));
-    
-    const newSelectedItems = selectedItems.filter(r => !idsToDelete.has(r.id));
-    setSelectedItems(newSelectedItems);
-    
-    if (newSelectedItems.length === 0) {
-      setIsEditingRecord(false);
-      setSplitPanelOpen(false);
+  const handleDeleteRecords = async () => {
+    if (!zone || !zone.pk) return;
+    try {
+      const idsToDelete = new Set(recordsToDelete.map(r => r.id));
+      
+      // Delete from backend sequentially (or in parallel using Promise.all)
+      for (const record of recordsToDelete) {
+        await dnsRecordService.deleteRecord(zone.pk, parseInt(record.id));
+      }
+
+      setRecords(prev => prev.filter(r => !idsToDelete.has(r.id)));
+      
+      const newSelectedItems = selectedItems.filter(r => !idsToDelete.has(r.id));
+      setSelectedItems(newSelectedItems);
+      
+      if (newSelectedItems.length === 0) {
+        setIsEditingRecord(false);
+        setSplitPanelOpen(false);
+      }
+      
+      setDeletedCount(recordsToDelete.length);
+      setShowDeletedSuccess(true);
+      setDeleteModalVisible(false);
+      setRecordsToDelete([]);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to delete one or more records');
     }
-    
-    setDeletedCount(recordsToDelete.length);
-    setShowDeletedSuccess(true);
-    setDeleteModalVisible(false);
-    setRecordsToDelete([]);
   };
 
   const openDeleteModal = (records: DnsRecord[]) => {
@@ -122,7 +151,7 @@ export default function HostedZoneDetailsPage() {
 
   const handleDeleteZone = () => {
     if (zone) {
-      deleteHostedZone(zone.id);
+      deleteHostedZone(zone.pk);
       router.push('/hosted-zones');
     }
   };
@@ -242,7 +271,7 @@ export default function HostedZoneDetailsPage() {
         )}
 
         <HostedZoneHeader zoneName={zoneName} onDeleteClick={() => setDeleteZoneModalVisible(true)} />
-        <HostedZoneAccordion zone={zone} />
+        <HostedZoneAccordion zone={zone} records={records} />
         <HostedZoneTabs
           zoneName={zoneName}
           records={records}

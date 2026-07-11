@@ -41,11 +41,11 @@ export const dnsRecordService = {
   },
 
   async updateRecord(hostedZoneId: number, recordId: number, data: DnsRecordCreate): Promise<DnsRecordResponse> {
-    const res = await api.put(`/api/hosted-zones/${hostedZoneId}/records/${recordId}`, data);
+    const res = await api.put(`/api/records/${recordId}`, data);
     return res.data.data;
   },
 
   async deleteRecord(hostedZoneId: number, recordId: number): Promise<void> {
-    await api.delete(`/api/hosted-zones/${hostedZoneId}/records/${recordId}`);
+    await api.delete(`/api/records/${recordId}`);
   }
 };

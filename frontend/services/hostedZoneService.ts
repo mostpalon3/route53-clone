@@ -17,6 +17,10 @@ export interface HostedZoneResponse {
   updated_at: string;
 }
 
+export interface HostedZoneUpdate {
+  description?: string;
+}
+
 export const hostedZoneService = {
   async getHostedZones(): Promise<HostedZoneResponse[]> {
     const res = await api.get('/api/hosted-zones');
@@ -25,6 +29,11 @@ export const hostedZoneService = {
 
   async createHostedZone(data: HostedZoneCreate): Promise<HostedZoneResponse> {
     const res = await api.post('/api/hosted-zones', data);
+    return res.data.data;
+  },
+
+  async updateHostedZone(id: number, data: HostedZoneUpdate): Promise<HostedZoneResponse> {
+    const res = await api.put(`/api/hosted-zones/${id}`, data);
     return res.data.data;
   },
 

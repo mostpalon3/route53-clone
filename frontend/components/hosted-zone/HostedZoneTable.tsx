@@ -13,8 +13,8 @@ import {
 } from '@cloudscape-design/components';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { useRouter } from 'next/navigation';
-import { HostedZone, USE_EMPTY_STATE } from '@/mock/hostedZones';
-import { useHostedZones } from '@/contexts/HostedZonesContext';
+import { USE_EMPTY_STATE } from '@/mock/hostedZones';
+import { useHostedZones, HostedZone } from '@/contexts/HostedZonesContext';
 
 interface HostedZoneTableProps {
   onSelectionChange?: (selectedItems: HostedZone[]) => void;
