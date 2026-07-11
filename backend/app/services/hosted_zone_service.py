@@ -30,9 +30,9 @@ def create_hosted_zone(db: Session, zone_in: HostedZoneCreate, user_id: int) -> 
     if not is_valid_domain(zone_in.domain_name):
         raise HTTPException(status_code=400, detail="Invalid domain name format")
 
-    existing_zone = db.query(HostedZone).filter(HostedZone.domain_name == zone_in.domain_name).first()
+    existing_zone = db.query(HostedZone).filter(HostedZone.domain_name == zone_in.domain_name, HostedZone.user_id == user_id).first()
     if existing_zone:
-        raise HTTPException(status_code=400, detail="Hosted zone with this domain name already exists")
+        raise HTTPException(status_code=400, detail="You already have a hosted zone with this domain name")
     
     zone_id = generate_zone_id()
     name_servers = allocate_name_servers()

@@ -12,7 +12,8 @@ import {
   Input, 
   RadioGroup, 
   Textarea,
-  BreadcrumbGroup
+  BreadcrumbGroup,
+  Alert
 } from '@cloudscape-design/components';
 import { AppShell } from '@/components/layout/AppShell';
 import { useHostedZones } from '@/contexts/HostedZonesContext';
@@ -25,10 +26,12 @@ export default function CreateHostedZonePage() {
   const [description, setDescription] = useState('');
   const [type, setType] = useState('Public');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMsg('');
     
     try {
       await addHostedZone({
@@ -37,9 +40,13 @@ export default function CreateHostedZonePage() {
         zone_type: type.toUpperCase()
       });
       router.push('/hosted-zones');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      // Optional: Add flashbar for errors here
+      if (err.response?.data?.detail) {
+        setErrorMsg(err.response.data.detail);
+      } else {
+        setErrorMsg('Failed to create hosted zone. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -64,6 +71,7 @@ export default function CreateHostedZonePage() {
     >
       <form onSubmit={handleSubmit}>
         <Form
+          errorText={errorMsg}
           actions={
             <SpaceBetween direction="horizontal" size="xs">
               <Button formAction="none" variant="link" onClick={() => router.push('/hosted-zones')}>
