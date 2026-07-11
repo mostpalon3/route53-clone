@@ -26,7 +26,7 @@ def allocate_name_servers():
         f"ns-{base+300}.awsdns-{random.randint(10, 99)}.co.uk."
     ]
 
-def create_hosted_zone(db: Session, zone_in: HostedZoneCreate) -> HostedZone:
+def create_hosted_zone(db: Session, zone_in: HostedZoneCreate, user_id: int) -> HostedZone:
     if not is_valid_domain(zone_in.domain_name):
         raise HTTPException(status_code=400, detail="Invalid domain name format")
 
@@ -39,6 +39,7 @@ def create_hosted_zone(db: Session, zone_in: HostedZoneCreate) -> HostedZone:
     
     try:
         new_zone = HostedZone(
+            user_id=user_id,
             zone_id=zone_id,
             domain_name=zone_in.domain_name,
             description=zone_in.description,
@@ -80,25 +81,25 @@ def create_hosted_zone(db: Session, zone_in: HostedZoneCreate) -> HostedZone:
         db.rollback()
         raise HTTPException(status_code=500, detail="Database transaction failed")
 
-def get_hosted_zones(db: Session):
-    return db.query(HostedZone).all()
+def get_hosted_zones(db: Session, user_id: int):
+    return db.query(HostedZone).filter(HostedZone.user_id == user_id).all()
 
-def get_hosted_zone(db: Session, id: int):
-    zone = db.query(HostedZone).filter(HostedZone.id == id).first()
+def get_hosted_zone(db: Session, id: int, user_id: int):
+    zone = db.query(HostedZone).filter(HostedZone.id == id, HostedZone.user_id == user_id).first()
     if not zone:
         raise HTTPException(status_code=404, detail="Hosted zone not found")
     return zone
 
-def update_hosted_zone(db: Session, id: int, zone_update: HostedZoneUpdate):
-    zone = get_hosted_zone(db, id)
+def update_hosted_zone(db: Session, id: int, zone_update: HostedZoneUpdate, user_id: int):
+    zone = get_hosted_zone(db, id, user_id)
     if zone_update.description is not None:
         zone.description = zone_update.description
     db.commit()
     db.refresh(zone)
     return zone
 
-def delete_hosted_zone(db: Session, id: int):
-    zone = get_hosted_zone(db, id)
+def delete_hosted_zone(db: Session, id: int, user_id: int):
+    zone = get_hosted_zone(db, id, user_id)
     db.delete(zone)
     db.commit()
     return True
