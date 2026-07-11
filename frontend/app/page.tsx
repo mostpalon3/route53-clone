@@ -6,7 +6,7 @@ import { AppShell } from '@/components/layout/AppShell';
 
 export default function HomePage() {
   return (
-    <AppShell breadcrumbs={<BreadcrumbGroup items={[{ text: 'Route 53', href: '#' }]} />}>
+    <AppShell breadcrumbs={<BreadcrumbGroup items={[{ text: 'Route 53', href: '/' }]} />}>
       {/* ── MAIN WRAPPER ── */}
       <div style={{ position: 'relative' }}>
 

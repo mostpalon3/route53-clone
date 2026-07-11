@@ -15,7 +15,7 @@ export default function DashboardPage() {
       breadcrumbs={
         <BreadcrumbGroup
           items={[
-            { text: 'Route 53', href: '#' },
+            { text: 'Route 53', href: '/' },
             { text: 'Dashboard', href: '#' }
           ]}
           ariaLabel="Breadcrumbs"

@@ -10,7 +10,7 @@ export function Sidebar() {
   const router = useRouter();
 
   const items: SideNavigationProps.Item[] = [
-    { type: 'link', text: 'Dashboard', href: '/' },
+    { type: 'link', text: 'Dashboard', href: '/dashboard' },
     { type: 'link', text: 'Hosted zones', href: '/hosted-zones' },
     { type: 'link', text: 'Health checks', href: '/coming-soon' },
     { type: 'link', text: 'Profiles', href: '/coming-soon' },

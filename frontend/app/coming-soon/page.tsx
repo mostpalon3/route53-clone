@@ -6,7 +6,7 @@ import { AppShell } from '@/components/layout/AppShell';
 
 export default function ComingSoonPage() {
   return (
-    <AppShell breadcrumbs={<BreadcrumbGroup items={[{ text: 'Route 53', href: '#' }, { text: 'Coming Soon', href: '#' }]} />}>
+    <AppShell breadcrumbs={<BreadcrumbGroup items={[{ text: 'Route 53', href: '/' }, { text: 'Coming Soon', href: '#' }]} />}>
       <ContentLayout
         header={
           <Header variant="h1" description="This feature is currently under development.">
