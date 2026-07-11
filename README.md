@@ -1,4 +1,6 @@
-# AWS Route 53 Clone
+# AWS Route 53 Clone 
+*The website can take time at first due to cold start*
+https://route53-clone-coral.vercel.app/
 
 This is a full-stack clone of AWS Route 53, featuring a responsive UI mimicking the AWS console and a backend to manage Hosted Zones and DNS Records.
 
