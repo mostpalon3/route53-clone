@@ -1,4 +1,5 @@
 # Amazon Route 53 Clone
+*May take while to load at start due to cold start of vercel and render*
 
 A full-stack clone of the **AWS Route 53** DNS management console, built with **Next.js 16**, **FastAPI**, and **SQLite**. This application replicates the core hosted-zone and DNS-record management workflows of the real AWS console, complete with multi-tenant authentication, automatic SOA/NS record generation, and the Cloudscape Design System UI.
 
