@@ -11,9 +11,6 @@ from app.services.auth_service import seed_default_admin
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# We are using Alembic for migrations, but we can also use create_all for initial fast prototyping.
-# Since the requirement mentions alembic, we will let Alembic handle the schema.
-# But for the seed data, we can try to inject it on startup if the DB exists.
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Route53 Clone API", version="1.0.0")
