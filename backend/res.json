@@ -1,1 +1,13 @@
-{"success":true,"message":"Signup successful","data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODQzNjk4MTgsInN1YiI6InRlc3RAdGVzdC5jb20ifQ.D2dk66S11M37NB0-MIb8jCIA2yGHEqeGeG6zjinKSv8","token_type":"bearer","user":{"id":2,"username":"testuser","email":"test@test.com"}}}
+{
+    "success": true,
+    "message": "Signup successful",
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODQzNjk4MTgsInN1YiI6InRlc3RAdGVzdC5jb20ifQ.D2dk66S11M37NB0-MIb8jCIA2yGHEqeGeG6zjinKSv8",
+        "token_type": "bearer",
+        "user": {
+            "id": 2,
+            "username": "testuser",
+            "email": "test@test.com"
+        }
+    }
+}
